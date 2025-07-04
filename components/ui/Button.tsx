@@ -1,6 +1,12 @@
-function Button({ children, onClick, type, className }) {
+import { PropsWithChildren } from 'react';
+
+interface ButtonProps extends PropsWithChildren {
+  type: string;
+  className: string;
+}
+function Button({  children, type, className }) {
   return (
-    <button type={type} onClick={onClick} className={className}>
+    <button type={type} className={className}>
       {children} 
     </button>
   );

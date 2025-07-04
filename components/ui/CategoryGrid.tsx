@@ -19,7 +19,7 @@ const categories : Category[] = [
 
 const CategoryGrid = () => {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4"> {/* Layout grid responsif */}
+    <div className="grid grid-cols-4  gap-3 p-3">
       {categories.map((category) => (
         <CategoryCard key={category.id} category={category} />
       ))}

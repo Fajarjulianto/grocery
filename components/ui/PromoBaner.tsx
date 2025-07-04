@@ -1,3 +1,4 @@
+import Image from "next/image";
 export const PromoBanner = () => (
   <div className="bg-green-50 rounded-2xl p-6 my-6 flex items-center justify-between overflow-hidden relative">
     <div className="z-10">
@@ -8,7 +9,12 @@ export const PromoBanner = () => (
       </button>
     </div>
     <div className="absolute right-0 top-0 h-full w-1/2 opacity-80 md:opacity-100">
-       PromoBaner
+       <Image
+        src="/images/cta.png"
+        alt="Promo Banner"
+        fill
+        className="object-contain"
+      />
     </div>
   </div>
 );

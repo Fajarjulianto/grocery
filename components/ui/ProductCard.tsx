@@ -1,8 +1,7 @@
 "use client";
-import Link from 'next/link';
+import Image from 'next/image';
 import { FaRegHeart } from 'react-icons/fa';
 
-// Tipe data untuk sebuah produk
 export type Product = {
   id: string;
   name: string;
@@ -23,7 +22,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <FaRegHeart className="w-5 h-5" />
       </button>
       <div className="w-full h-24 relative mb-2">
-       card
+        <Image
+          src={product.imageUrl}
+          alt={product.name}
+          fill
+          className="object-contain"
+        />
       </div>
       <h3 className="font-semibold text-gray-800 text-sm truncate">{product.name}</h3>
       <p className="text-gray-500 text-xs mb-3">{product.weight}</p>
@@ -34,7 +38,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             <p className="text-gray-400 line-through text-xs">${product.originalPrice.toFixed(2)}</p>
           )}
         </div>
-        <button className="bg-green-500 text-white rounded-lg w-8 h-8 flex items-center justify-center hover:bg-green-600 transition-colors">+</button>
+        <button className="bg-green-500 text-white rounded-lg p-4 px-5 w-8 h-8 flex items-center justify-center hover:bg-green-600 transition-colors text-sm">Add</button>
       </div>
     </div>
   );

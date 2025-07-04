@@ -5,10 +5,11 @@ import { PromoBanner } from "@/components/ui/PromoBaner";
 import { BestDeals } from "@/components/ui/BestDeals";
 import { BottomNavBar } from "@/components/ui/BottomNavbar";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 
 export default function HomePage() {
   return (
-      <div className="bg-gray-100 min-h-screen font-sans">
+    <div className="w-full bg-primary flex justify-center font-inter">
       <div className="relative bg-white max-w-screen-lg mx-auto shadow-lg">
         <main className="px-4 pb-24">
           <header className="py-4 flex justify-between items-center">
@@ -19,6 +20,7 @@ export default function HomePage() {
             </button>
           </header>
           <SearchFilter />
+          <SectionHeader title="Shop by Categories" />
           <div className="space-y-8">
             <CategoryGrid />
             <PromoBanner />
