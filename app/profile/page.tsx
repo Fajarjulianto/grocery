@@ -27,8 +27,8 @@ const menuItems: MenuItem[] = [
   { icon: FiLock, name: 'Change Password', href: '/profile/change-password' },
   { icon: FiCreditCard, name: 'Payment Method', href: '/profile/payment' },
   { icon: FiBox, name: 'My Orders', href: '/profile/orders' },
-  { icon: FiShield, name: 'Privacy Policy', href: '/privacy' },
-  { icon: FiFileText, name: 'Terms & Conditions', href: '/terms' },
+  { icon: FiShield, name: 'Privacy Policy', href: '/profile/privacy' },
+  { icon: FiFileText, name: 'Terms & Conditions', href: '/profile/terms' },
 ]
 
 
