@@ -1,30 +1,47 @@
-import CategoryCard from './CategoryCard'; 
-type Category = {
-  id: number;
-  name: string;
-  imageUrl: string;
-  href: string;
-};
+"use client";
 
-const categories : Category[] = [
-  { id: 1, name: 'Vegetables & Fruits', imageUrl: '/images/fruit.png', href: '/categories/vegetables' },
-  { id: 2, name: 'Dairy & Breakfast', imageUrl: '/images/cookie.png', href: '/categories/dairy' },
-  { id: 3, name: 'Cold Drinks & Juices', imageUrl: '/images/colddrink.png', href: '/categories/drinks' },
-  { id: 4, name: 'Instant & Frozen Food', imageUrl: '/images/instanfood.png', href: '/categories/frozen' },
-  { id: 5, name: 'Tea & Coffee', imageUrl: '/images/teaandcoffe.png', href: '/categories/tea-coffee' },
-  { id: 6, name: 'Atta, Rice & Dal', imageUrl: '/images/attarice.png', href: '/categories/grains' },
-  { id: 7, name: 'Masala, Oil & Dry Fruits', imageUrl: '/images/masalaoil.png', href: '/categories/spices' },
-  { id: 8, name: 'Chicken, Meat & Fish', imageUrl: '/images/meatandfish.png', href: '/categories/meat' },
-];
+import Image from 'next/image';
+import Link from 'next/link';
+import { SectionHeader } from './SectionHeader';
+import type { Category } from '@/types'; 
 
-const CategoryGrid = () => {
+interface CategoryCardProps {
+  category: Category;
+}
+
+const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
   return (
-    <div className="grid grid-cols-4  gap-3 p-3">
-      {categories.map((category) => (
-        <CategoryCard key={category.id} category={category} />
-      ))}
-    </div>
+    <Link href={category.href} className="flex flex-col items-center gap-2 text-center group">
+      <div className="w-20 h-20 bg-gray-100 rounded-xl flex items-center justify-center p-2 overflow-hidden group-hover:shadow-md transition-shadow">
+        <div className="relative w-full h-full">
+            <Image 
+                src={category.imageUrl} 
+                alt={category.name} 
+                layout="fill" 
+                objectFit="contain" 
+                onError={(e) => { e.currentTarget.src = 'https://placehold.co/60x60/e2e8f0/e2e8f0?text=Error'; }}
+            />
+        </div>
+      </div>
+      <p className="text-xs font-medium text-gray-700 group-hover:text-green-600">{category.name}</p>
+    </Link>
   );
 };
 
-export default CategoryGrid;
+
+interface CategoryGridProps {
+  categories: Category[];
+}
+
+export const CategoryGrid: React.FC<CategoryGridProps> = ({ categories }) => {
+  return (
+    <section>
+      <SectionHeader title="Shop By Category" />
+      <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-4">
+        {(categories || []).map((category) => (
+          <CategoryCard key={category.id} category={category} />
+        ))}
+      </div>
+    </section>
+  );
+};
