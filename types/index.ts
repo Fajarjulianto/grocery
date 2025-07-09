@@ -6,13 +6,24 @@ export interface Product {
   detail: string;
   sku?: string;
   sold?: number;
+  description?: string;
+  rating?: number;
+  reviewCount?: number;
 }
 
 export interface Category {
-  id: number | string; // ID bisa berupa angka atau string dari API
+  id: number | string;
   name: string;
   imageUrl: string;
-  href: string; // Link untuk navigasi
+  href: string; 
+}
+
+export interface Review {
+  id: string;
+  name: string;
+  rating: number;
+  comment: string;
+  images?: string;
 }
 
 export interface CategoryApiProduct extends Product {

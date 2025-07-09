@@ -1,10 +1,11 @@
 import { SectionHeader } from './SectionHeader';
-import { ProductCard, Product } from './ProductCard';
+import { ProductCard } from './ProductCard';
+import type { Product } from '@/types';
 
-const bestDealsProducts: Product[] = [
-    { id: '1', name: 'Surf Excel Easy Wash Detergent Power', weight: '500 ml', price: 12, originalPrice: 14, imageUrl: '/images/surf.png' },
-    { id: '2', name: 'Fortune Arhar Dal (Toor Dal)', weight: '1 kg', price: 10, originalPrice: 12, imageUrl: '/images/fortune.png' },
-    { id: '3', name: 'Fresh Red Apples', weight: '1 kg', price: 8, originalPrice: 10, imageUrl: '/images/apple.png' },
+const bestDealsProducts: Product[] = [ 
+    { id: '1', name: 'Surf Excel Easy Wash Detergent Power', detail: '500 ml', price: 12,  image: '/images/surf.png' },
+    { id: '2', name: 'Fortune Arhar Dal (Toor Dal)', detail: '1 kg', price: 10,  image: '/images/fortune.png' },
+    { id: '3', name: 'Fresh Red Apples', detail: '1 kg', price: 8,  image: '/images/apple.png' },
 ];
 
 export const BestDeals = () => (

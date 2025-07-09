@@ -1,31 +1,67 @@
 import { create } from 'zustand';
-import { Product } from '../types';
+import type { Product } from '@/types';
+
+export interface CartItem {
+  product: Product;
+  quantity: number;
+}
+
+interface bestDealsProducts {
+  products: Product[];
+}
+
+export const bestDealsProducts: Product[] = [];
 
 interface CartState {
-  items: Product[];
+  items: CartItem[];
   addToCart: (product: Product) => void;
-  removeFromCart: (productId: string) => void;
-  getCartItemCount: () => number;
+  increaseQuantity: (productId: string) => void;
+  decreaseQuantity: (productId: string) => void;
+  getSubtotal: () => number;
 }
 
 export const useCartStore = create<CartState>((set, get) => ({
   items: [],
   
-
   addToCart: (product) => {
-    set((state) => ({
-      items: [...state.items, product],
-    }));
-    console.log(`Added ${product.name} to cart. Total items: ${get().items.length + 1}`);
+    const { items } = get();
+    const existingItem = items.find((item) => item.product.id === product.id);
+
+    if (existingItem) {
+      const updatedItems = items.map((item) =>
+        item.product.id === product.id
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      );
+      set({ items: updatedItems });
+    } else {
+      set({ items: [...items, { product, quantity: 1 }] });
+    }
   },
 
-  removeFromCart: (productId) => {
+  increaseQuantity: (productId) => {
     set((state) => ({
-      items: state.items.filter((item) => item.id !== productId),
+      items: state.items.map((item) =>
+        item.product.id === productId
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      ),
     }));
   },
 
-  getCartItemCount: () => {
-    return get().items.length;
+  decreaseQuantity: (productId) => {
+    set((state) => ({
+      items: state.items
+        .map((item) =>
+          item.product.id === productId
+            ? { ...item, quantity: Math.max(0, item.quantity - 1) }
+            : item
+        )
+        .filter((item) => item.quantity > 0)
+    }));
+  },
+
+  getSubtotal: () => {
+    return get().items.reduce((total, item) => total + item.product.price * item.quantity, 0);
   },
 }));
