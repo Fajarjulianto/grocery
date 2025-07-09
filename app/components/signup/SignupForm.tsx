@@ -3,7 +3,7 @@
 import React, { JSX } from "react";
 import { useLoading } from "@/app/context/loading";
 
-import Loader from "../loading";
+import LoadingAnimation from "../LoadingAnimation";
 
 function SignupForm(): JSX.Element {
   const [username, setUsername] = React.useState<string>("");
@@ -116,7 +116,7 @@ function SignupForm(): JSX.Element {
         </button>
       </form>
 
-      {isLoading && <Loader />}
+      {isLoading && <LoadingAnimation />}
     </div>
   );
 }
