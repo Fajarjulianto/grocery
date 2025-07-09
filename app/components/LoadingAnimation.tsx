@@ -1,6 +1,6 @@
 import React from "react";
 
-const Loader = () => {
+const LoadingAnimation = () => {
   return (
     <>
       <style>{`
@@ -44,4 +44,4 @@ const Loader = () => {
   );
 };
 
-export default Loader;
+export default LoadingAnimation;
