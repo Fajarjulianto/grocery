@@ -5,6 +5,7 @@ import Input from "../ui/Input";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Button from "../ui/Button";
+import Image from "next/image";
 
 function RegisterForm() {
   const [email, setEmail] = useState("");
@@ -45,8 +46,11 @@ function RegisterForm() {
 
   return (
     <div className="w-full max-w-sm">
-        <div className="mx-auto mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-green-500 text-3xl font-bold text-white">
-          R
+        <div className="mx-auto mb-8 flex h-16 w-16 items-center justify-center">
+          <Image src="/images/logor.png" 
+          alt="logo" 
+          width={100} 
+          height={100} />
         </div>
         <div className="text-center mb-5">
           <h1 className="text-2xl font-bold text-brand-secondary">

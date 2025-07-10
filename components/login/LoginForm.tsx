@@ -8,6 +8,7 @@ import { FormEvent } from "react";
 import { useState } from "react";
 import { FcGoogle } from 'react-icons/fc';
 import { AiOutlineEyeInvisible } from 'react-icons/ai';
+import Image from "next/image";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -37,7 +38,15 @@ function LoginForm() {
        
 
         <div className="flex flex-col items-center text-center">
-           <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-green-600 text-4xl font-bold text-white">R</div>
+            <div className="mb-8 flex h-16 w-16 
+           items-center justify-center ">
+                <Image 
+                src="/images/logor.png" 
+                alt="logo" 
+                width={100} 
+                height={100}
+                className="object-contain"/>
+                </div>
             
             <h1 className="text-2xl font-semibold tracking-tight">
                 Welcome Back
