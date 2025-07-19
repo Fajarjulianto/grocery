@@ -1,4 +1,5 @@
 "use client";
+<<<<<<< HEAD
 
 import React, { JSX } from "react";
 import Image from "next/image";
@@ -8,6 +9,15 @@ import type { Product } from "@/types/product";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Spinner from "../utils/Spinner";
+=======
+import Image from 'next/image';
+import { FaRegHeart, FaHeart } from 'react-icons/fa';
+import { useWishlistStore } from '@/store/WishlistStore';
+import { useCartStore } from '@/store/CartStore';
+import type { Product } from '@/types';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+>>>>>>> 70ed47b2b64e30e938884dbb45d059cdab618607
 
 interface ProductCardProps {
   id: string;
@@ -93,10 +103,28 @@ export function ProductCard({
     }
   }
 
+ const { addToWishlist, removeFromWishlist, isWishlisted } = useWishlistStore();
+
+ const handleWishlist = () => {
+    if (isWishlisted(product.id)) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist(product);
+    }
+  };
+
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-4 flex-shrink-0 w-44 relative">
-      <button className="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition-colors">
-        <FaRegHeart className="w-5 h-5" />
+        <button 
+        onClick={handleWishlist}
+        className="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition-colors"
+        aria-label="Toggle Wishlist"
+      >
+        {isWishlisted(product.id) ? (
+          <FaHeart className="w-5 h-5 text-red-500" />
+        ) : (
+          <FaRegHeart className="w-5 h-5" />
+        )}
       </button>
 
       <div className="w-full h-24 relative mb-2 cursor-pointer">

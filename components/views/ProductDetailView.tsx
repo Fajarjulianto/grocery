@@ -29,7 +29,7 @@ const ReviewCard = ({ review }: { review: Review }) => (
         src={review.images}
         alt={review.name}
         width={40}
-        height={40}
+        height={40} 
         className="rounded-full object-cover"
         onError={(e) => { e.currentTarget.src = 'https://placehold.co/40x40/e2e8f0/94a3b8'; }}
       />
