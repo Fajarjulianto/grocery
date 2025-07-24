@@ -1,30 +1,21 @@
 "use client";
-<<<<<<< HEAD
 
 import React, { JSX } from "react";
 import Image from "next/image";
-import { FaRegHeart } from "react-icons/fa";
-import { useCartStore } from "@/app/context/productContext";
-import type { Product } from "@/types/product";
+// import { FaRegHeart } from "react-icons/fa";
+// import { useCartStore } from "@/app/context/productContext";
+// import type { Product } from "@/types/product";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Spinner from "../utils/Spinner";
-=======
-import Image from 'next/image';
-import { FaRegHeart, FaHeart } from 'react-icons/fa';
-import { useWishlistStore } from '@/store/WishlistStore';
-import { useCartStore } from '@/store/CartStore';
-import type { Product } from '@/types';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
->>>>>>> 70ed47b2b64e30e938884dbb45d059cdab618607
+import Alert from "../utils/Alert";
 
 interface ProductCardProps {
   id: string;
   image: string;
   name: string;
   detail: string;
-  price: number;
+  price?: number;
   final_price: number;
 }
 
@@ -38,8 +29,10 @@ export function ProductCard({
 }: ProductCardProps): JSX.Element {
   const router = useRouter();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isAlertOpen, setIsAlertOpen] = React.useState(false);
+  const [alertMessage, setAlertMessage] = React.useState("");
 
-  // functions
+  // functions to Add to cart the items based in the user's token and product_id
   async function addToCart(product_id: string) {
     setIsLoading(true);
 
@@ -66,7 +59,7 @@ export function ProductCard({
         // console.log(tokenResponse);
 
         if (!tokenResponse.ok) {
-          // router.push("/login");
+          router.push("/login");
           return;
         }
 
@@ -89,11 +82,14 @@ export function ProductCard({
         );
 
         const newData = await newResponse.json();
-        console.log(newData);
-        // alert(newData.message);
+        // console.log(newData);
+        setIsAlertOpen(true);
+        setAlertMessage(newData[0].message);
+        return;
       } else {
         const data = await response.json();
-        alert(data[0].message);
+        setIsAlertOpen(true);
+        setAlertMessage(data[0].message);
       }
     } catch (error) {
       console.error("Error adding to cart:", error);
@@ -103,30 +99,8 @@ export function ProductCard({
     }
   }
 
- const { addToWishlist, removeFromWishlist, isWishlisted } = useWishlistStore();
-
- const handleWishlist = () => {
-    if (isWishlisted(product.id)) {
-      removeFromWishlist(product.id);
-    } else {
-      addToWishlist(product);
-    }
-  };
-
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-4 flex-shrink-0 w-44 relative">
-        <button 
-        onClick={handleWishlist}
-        className="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition-colors"
-        aria-label="Toggle Wishlist"
-      >
-        {isWishlisted(product.id) ? (
-          <FaHeart className="w-5 h-5 text-red-500" />
-        ) : (
-          <FaRegHeart className="w-5 h-5" />
-        )}
-      </button>
-
       <div className="w-full h-24 relative mb-2 cursor-pointer">
         <Link href={`/products/${id}`}>
           <Image
@@ -150,7 +124,9 @@ export function ProductCard({
           <p className="text-gray-900 font-bold text-base">
             ${final_price.toFixed(2)}
           </p>
-          <p className="line-through text-gray-400 text-sm">{price}</p>
+          {price && (
+            <p className="line-through text-gray-400 text-sm">{price}</p>
+          )}
         </div>
         <button
           onClick={() => addToCart(id)}
@@ -164,6 +140,11 @@ export function ProductCard({
           {isLoading ? <Spinner text={""} /> : "Add"}
         </button>
       </div>
+      <Alert
+        message={alertMessage}
+        isOpen={isAlertOpen}
+        onConfirm={() => setIsAlertOpen(false)}
+      />
     </div>
   );
 }
