@@ -39,46 +39,45 @@ export default function ProductDetails({ product }: Props) {
 
   return (
     <div className={`w-full bg-secondary ${inter.className}`}>
-      {/* Loading Animation */}
-      {isLoading ? (
-        <LoadingAnimation />
-      ) : (
-        <div className="max-w-md mx-auto p-4 space-y-6 bg-white">
-          <Navigator title={"Prouct Details"} favorite={true} />
-          <Image
-            src={data.image}
-            alt={data.name}
-            width={300}
-            height={300}
-            className="w-full rounded-lg object-cover"
-          />
+      <div className="max-w-md mx-auto p-4 space-y-6 bg-white">
+        <Navigator
+          title={"Prouct Details"}
+          favorite={true}
+          product_id={data.product_id}
+        />
+        <Image
+          src={data.image}
+          alt={data.name}
+          width={300}
+          height={300}
+          className="w-full rounded-lg object-cover"
+        />
 
-          <h2 className="text-2xl font-semibold">{data.name}</h2>
-          <RatingDisplay
-            rating={data.rating as number}
-            review={data.review as number}
-          />
-          {/* price and details */}
-          <PriceAndDetails
-            price={data.price}
-            final_price={data.final_price}
-            detail={data.detail}
-            discount_percentage={data.discount_percentage}
-          />
-          {/* reviews */}
-          <Reviews
-            product_id={data.product_id}
-            rating={data.rating as number}
-            review={data.review as number}
-          />
+        <h2 className="text-2xl font-semibold">{data.name}</h2>
+        <RatingDisplay
+          rating={data.rating as number}
+          review={data.review as number}
+        />
+        {/* price and details */}
+        <PriceAndDetails
+          price={data.price}
+          final_price={data.final_price}
+          detail={data.detail}
+          discount_percentage={data.discount_percentage}
+        />
+        {/* reviews */}
+        <Reviews
+          product_id={data.product_id}
+          rating={data.rating as number}
+          review={data.review as number}
+        />
 
-          {/* Similar products */}
-          <SimilarProducts category={data.category} />
+        {/* Similar products */}
+        <SimilarProducts category={data.category} />
 
-          {/* add to cart */}
-          <AddToCart price={data.price} product_id={data.product_id} />
-        </div>
-      )}
+        {/* add to cart */}
+        <AddToCart price={data.price} product_id={data.product_id} />
+      </div>
     </div>
   );
 }

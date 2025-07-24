@@ -60,7 +60,7 @@ export default function Reviews({
       <h3 className="text-lg font-bold mb-1">Reviews & Ratings</h3>
       <div className="flex gap-2 py-1">
         <h1 className="font-extrabold text-3xl flex items-center">
-          {Number(rating) ? rating : 0}
+          {rating ? Number(rating.toFixed(1)) : 0}
         </h1>
         <div className="flex flex-col">
           <Rating

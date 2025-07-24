@@ -15,7 +15,7 @@ export default function RatingDisplay({
         className="text-primary"
         size="small"
         name="half-rating-read"
-        defaultValue={rating as number}
+        defaultValue={rating ? Number(rating.toFixed(2)) : 0}
         precision={0.5}
         sx={{
           "& .MuiRating-iconFilled": {
@@ -25,7 +25,7 @@ export default function RatingDisplay({
         readOnly
       />
       <div className="flex gap-2">
-        <span>{typeof rating === "number" ? rating : 0}</span>
+        <span>{rating ? Number(rating.toFixed(1)) : 0}</span>
         <span>{"(" + review + ") Reviews"}</span>
       </div>
     </div>
