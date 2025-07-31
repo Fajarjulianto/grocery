@@ -1,6 +1,8 @@
-import { type Product, type ErrorMessage } from "@/types/product";
+import { type Product } from "@/types/product";
+import type { Message } from "@/types/Message";
 import type { Token } from "@/types";
 import type { Cart } from "@/types/cart";
+import type { Coupon } from "@/types/coupon";
 
 /**
  * ProductAPI class provides methods for interacting with product-related endpoints.
@@ -29,11 +31,11 @@ class ProductAPI {
       `http://localhost:3001/api/product-by-id?productID=${id}`
     );
 
-    const result: Product | ErrorMessage = await response.json();
+    const result: Product | Message = await response.json();
 
     if (response.status !== 200) {
-      console.warn("API error:", (result as ErrorMessage)[0].message);
-      return (result as ErrorMessage)[0].message;
+      console.warn("API error:", (result as Message)[0].message);
+      return (result as Message)[0].message;
     }
 
     return result as Product;
@@ -197,7 +199,7 @@ class ProductAPI {
     return data[0].message as string;
   }
 
-  async getCartItems(token: string): Promise<Cart | false> {
+  public async getCartItems(token: string): Promise<Cart | false> {
     const response = await fetch("http://localhost:3001/api/shopping-cart", {
       method: "GET",
       headers: {
@@ -212,6 +214,48 @@ class ProductAPI {
     }
 
     return data as Cart;
+  }
+  public async getCoupons(token: string): Promise<Coupon | false> {
+    const response = await fetch("http://localhost:3001/api/coupons", {
+      method: "GET",
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (response.status !== 200 || data.length === 0) {
+      console.warn("API error:", data);
+      return false;
+    }
+
+    return data as Coupon;
+  }
+
+  public async removeCartItem(
+    token: string,
+    product_id: string
+  ): Promise<false | Message> {
+    const response = await fetch("http://localhost:3001/api/delete-cart-item", {
+      method: "DELETE",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ product_id }),
+    });
+
+    const message = await response.json();
+
+    console.log("product_id", product_id);
+    console.log(message);
+
+    if (response.status !== 200) {
+      return false;
+    }
+
+    return message as Message;
   }
 }
 

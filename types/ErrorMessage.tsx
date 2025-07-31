@@ -1,3 +1,0 @@
-type ErrorMessage = {
-  message: string;
-}[];
