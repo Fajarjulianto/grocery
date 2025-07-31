@@ -9,7 +9,11 @@ import productAPI from "@/lib/api";
 // Types
 import type { Product } from "@/types/product";
 
-export function BestDeals(): JSX.Element {
+type ChildrenProps = {
+  hidden?: boolean;
+};
+
+export function BestDeals({ hidden }: ChildrenProps): JSX.Element {
   const [bestDealsProduct, setBestDealsProduct] = React.useState<Product>([]);
   const [success, setSuccess] = React.useState<boolean>(true);
   React.useEffect(() => {
@@ -28,7 +32,7 @@ export function BestDeals(): JSX.Element {
   }, []);
   return (
     <section>
-      <SectionHeader title="Best Deal" />
+      <SectionHeader title="Best Deal" hidden={hidden} />
 
       {success ? (
         <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4">
