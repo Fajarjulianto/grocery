@@ -3,8 +3,9 @@ import { FiHome, FiChevronUp, FiArrowRight } from "react-icons/fi";
 
 export default function Address() {
   return (
-    <footer className=" bg-white z-10 max-w-screen-lg mx-auto">
-      <div className="p-4 border-t border-gray-200">
+    <footer className=" bg-white z-10 max-w-screen-lg mx-auto px-4">
+      <hr className="bg-gray-200 opacity-10"></hr>
+      <div className="py-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <FiHome className="text-green-600" size={24} />
