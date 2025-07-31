@@ -15,8 +15,14 @@ import type { Cart } from "@/types/cart";
 import ProductAPI from "@/lib/api";
 import { Token } from "@/types";
 
+// Context
+import { useCartContext } from "@/app/context/cartContext";
+
 export default function CartPage() {
   const router = useRouter();
+
+  // Context to update total price
+  const { updateItemTotal } = useCartContext();
 
   const [cartItems, setCartItems] = React.useState<Cart | null>();
   const [error, setError] = React.useState<boolean>(false);
@@ -34,7 +40,7 @@ export default function CartPage() {
           return;
         }
 
-        console.log("New token:", newToken);
+        // console.log("New token:", newToken);
 
         const newCartData: false | Cart = await ProductAPI.getCartItems(
           newToken[0].access_token as string
@@ -44,13 +50,31 @@ export default function CartPage() {
           setError(true);
           return;
         }
+
+        const totalPrice: number = newCartData.reduce(
+          (accumulator, currentValue) => {
+            return (
+              accumulator + currentValue.final_price * currentValue.quantity
+            );
+          },
+          0
+        );
         // console.log(newCartData);
+        console.log(totalPrice);
+        updateItemTotal(totalPrice);
         setCartItems(newCartData as Cart);
         return;
       }
+      const totalPrice: number = cartData.reduce(
+        (accumulator, currentValue) => {
+          return accumulator + currentValue.final_price * currentValue.quantity;
+        },
+        0
+      );
 
+      updateItemTotal(totalPrice);
       setCartItems(cartData);
-      console.log(cartData);
+      // console.log(cartData);
       return;
     }
 
@@ -86,10 +110,11 @@ export default function CartPage() {
         </header>
 
         <main className="p-4">
-          <div className="divide-y divide-gray-200">
+          <div>
             {cartItems &&
               cartItems.map((item, index) => (
                 <CartItems
+                  product_id={item.product_id}
                   key={index}
                   image={item.image}
                   name={item.name}
@@ -102,9 +127,8 @@ export default function CartPage() {
             <h2 className="text-xl font-bold text-gray-800 mb-4">
               Before you Checkout
             </h2>
-            <BestDeals />
+            <BestDeals hidden={true} />
           </div>
-          {/* <div className="mt-8"></div> */}
         </main>
       </div>
     </div>

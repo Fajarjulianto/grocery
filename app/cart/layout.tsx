@@ -9,9 +9,9 @@ import OrderSummary from "@/components/cart/OrderSummary";
 export default async function CartLayout() {
   return (
     <div className="bg-secondary flex justify-center min-h-screen relative">
-      <div className="w-2xl bg-white">
+      <div className="w-2xl bg-white pb-20">
         <CartPage />
-        <OrderSummary itemTotal={24} discount={2} deliveryFee={0} />
+        <OrderSummary />
         <Address />
         <CheckoutButton />
       </div>
