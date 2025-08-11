@@ -14,7 +14,7 @@ export default async function ProductPage({
   const { id } = await params;
   // console.log("productID", id);
   const product = await ProductAPi.getProductById(id);
-  console.log("product response", product);
+  // console.log("product response", product);
   if (!Array.isArray(product)) {
     return <ErrorMessage message={product as string} />;
   }

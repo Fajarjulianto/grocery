@@ -1,20 +1,17 @@
-import { SectionHeader } from "./SectionHeader";
-import { ProductCard } from "./ProductCard";
-
 import React, { JSX } from "react";
+import Image from "next/image";
 
-// API codes
+// UI components
+
+// API
 import productAPI from "@/lib/api";
+import { SectionHeader } from "../ui/SectionHeader";
+import { ProductCard } from "../ui/ProductCard";
 
 // Types
 import type { Product } from "@/types/product";
-
-type ChildrenProps = {
-  hidden?: boolean;
-};
-
-export function BestDeals({ hidden }: ChildrenProps): JSX.Element {
-  const [bestDealsProduct, setBestDealsProduct] = React.useState<Product>([]);
+export default function PopularProducts(): JSX.Element {
+  const [popularProduct, setPopularProduct] = React.useState<Product>([]);
   const [success, setSuccess] = React.useState<boolean>(true);
   React.useEffect(() => {
     async function fetchBestDeals() {
@@ -25,18 +22,18 @@ export function BestDeals({ hidden }: ChildrenProps): JSX.Element {
         return;
       }
 
-      setBestDealsProduct(bestDeals as Product);
+      setPopularProduct(bestDeals as Product);
     }
 
     fetchBestDeals();
   }, []);
   return (
     <section>
-      <SectionHeader title="Best Deal" hidden={hidden} />
+      <SectionHeader title="Popular Products" />
 
       {success ? (
         <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4">
-          {bestDealsProduct.map((product, index) => (
+          {popularProduct.map((product, index) => (
             <span key={index}>
               <ProductCard
                 id={product.product_id}

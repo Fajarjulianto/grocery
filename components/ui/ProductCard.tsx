@@ -14,7 +14,7 @@ interface ProductCardProps {
   image: string;
   name: string;
   detail: string;
-  price: number;
+  price?: number;
   final_price: number;
 }
 
@@ -28,8 +28,10 @@ export function ProductCard({
 }: ProductCardProps): JSX.Element {
   const router = useRouter();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isAlertOpen, setIsAlertOpen] = React.useState(false);
+  const [alertMessage, setAlertMessage] = React.useState("");
 
-  // functions
+  // functions to Add to cart the items based in the user's token and product_id
   async function addToCart(product_id: string) {
     setIsLoading(true);
 
@@ -56,7 +58,7 @@ export function ProductCard({
         // console.log(tokenResponse);
 
         if (!tokenResponse.ok) {
-          // router.push("/login");
+          router.push("/login");
           return;
         }
 
@@ -79,11 +81,14 @@ export function ProductCard({
         );
 
         const newData = await newResponse.json();
-        console.log(newData);
-        // alert(newData.message);
+        // console.log(newData);
+        setIsAlertOpen(true);
+        setAlertMessage(newData[0].message);
+        return;
       } else {
         const data = await response.json();
-        alert(data[0].message);
+        setIsAlertOpen(true);
+        setAlertMessage(data[0].message);
       }
     } catch (error) {
       console.error("Error adding to cart:", error);
@@ -141,7 +146,9 @@ export function ProductCard({
           <p className="text-gray-900 font-bold text-base">
             {/* ${final_price.toFixed(2)} */}
           </p>
-          <p className="line-through text-gray-400 text-sm">{price}</p>
+          {price && (
+            <p className="line-through text-gray-400 text-sm">{price}</p>
+          )}
         </div>
         <button
           onClick={() => addToCart(id)}
@@ -155,6 +162,11 @@ export function ProductCard({
           {isLoading ? <Spinner text={""} /> : "Add"}
         </button>
       </div>
+      <Alert
+        message={alertMessage}
+        isOpen={isAlertOpen}
+        onConfirm={() => setIsAlertOpen(false)}
+      />
     </div>
   );
 }
