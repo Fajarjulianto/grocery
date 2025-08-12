@@ -71,7 +71,7 @@ export default function AddToCart({ price, product_id }: Props): JSX.Element {
   }
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between w-full">
       <Alert
         message={alertMessage}
         isOpen={alert}
