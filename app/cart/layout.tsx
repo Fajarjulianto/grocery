@@ -9,7 +9,7 @@ import OrderSummary from "@/components/cart/OrderSummary";
 export default async function CartLayout() {
   return (
     <div className="bg-secondary flex justify-center min-h-screen relative">
-      <div className="w-2xl bg-white pb-20">
+      <div className="w-full max-w-screen md:max-w-2xl bg-white pb-20">
         <CartPage />
         <OrderSummary />
         <Address />
