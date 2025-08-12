@@ -35,7 +35,7 @@ export function BestDeals({ hidden }: ChildrenProps): JSX.Element {
       <SectionHeader title="Best Deal" hidden={hidden} />
 
       {success ? (
-        <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4">
+        <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 w-full">
           {bestDealsProduct.map((product, index) => (
             <span key={index}>
               <ProductCard

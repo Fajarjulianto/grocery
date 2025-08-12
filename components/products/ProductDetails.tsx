@@ -32,14 +32,12 @@ const inter = Inter({
 });
 
 export default function ProductDetails({ product }: Props) {
-  const { isLoading } = useLoading();
-
   const data = product[0];
   // console.log(data);
 
   return (
-    <div className={`w-full bg-secondary ${inter.className}`}>
-      <div className="max-w-md mx-auto p-4 space-y-6 bg-white">
+    <div className={`w-full min-h-screen bg-secondary ${inter.className}`}>
+      <div className="max-w-sm md:max-w-2xl min-h-screen relative mx-auto p-4 space-y-6 bg-white">
         <Navigator
           title={"Prouct Details"}
           favorite={true}
