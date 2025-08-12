@@ -32,7 +32,7 @@ export default function PopularProducts(): JSX.Element {
       <SectionHeader title="Popular Products" />
 
       {success ? (
-        <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4">
+        <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 w-full">
           {popularProduct.map((product, index) => (
             <span key={index}>
               <ProductCard
