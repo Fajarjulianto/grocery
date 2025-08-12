@@ -6,9 +6,13 @@ import Image from "next/image";
 // API
 import ProductApi from "@/lib/api";
 
+// Components
+import Alert from "./Alert";
+
 // types
 import type { Wishlist } from "@/types/wishlist";
 import type { Token } from "@/types";
+import type { Message } from "@/types/Message";
 
 type Props = {
   favorite: boolean;
@@ -21,18 +25,14 @@ export default function Navigator({ favorite, title, product_id }: Props) {
 
   const [wishlistData, setWishlistData] = React.useState<Wishlist>();
   const [disableButton, setDisableButton] = React.useState<boolean>(false);
-  const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [message, setMessage] = React.useState<string>("");
+  const [alert, setAlert] = React.useState<boolean>(false);
+  // const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     async function getDataFromDB() {
       try {
-        setIsLoading(true);
         const token = localStorage.getItem("access_token") as string;
-
-        if (!token) {
-          router.push("/login");
-          return;
-        }
 
         let wishlistResponse = (await ProductApi.getWishList(
           token
@@ -43,7 +43,7 @@ export default function Navigator({ favorite, title, product_id }: Props) {
           const newToken: boolean | Token = await ProductApi.getRefreshToken();
 
           if (!newToken) {
-            router.push("/login");
+            // router.push("/login");
             return;
           }
 
@@ -57,7 +57,6 @@ export default function Navigator({ favorite, title, product_id }: Props) {
 
           if (!wishlistResponse) {
             setDisableButton(false);
-            setIsLoading(false);
             return;
           }
         }
@@ -78,16 +77,67 @@ export default function Navigator({ favorite, title, product_id }: Props) {
       } catch (error) {
         console.error("Error fetching wishlist:", error);
         setDisableButton(false);
-      } finally {
-        setIsLoading(false);
       }
     }
 
     getDataFromDB();
   }, []);
 
+  // Function to add the product to the wishlist DB
+
+  async function addToWishlist(): Promise<void> {
+    console.log("The button works");
+    const token = localStorage.getItem("access_token") as string;
+    const response: false | Message = await ProductApi.addToWishlist(
+      token,
+      product_id
+    );
+    // console.log(response);
+    if (!response) {
+      const newToken: false | Token = await ProductApi.getRefreshToken();
+
+      if (newToken === false) {
+        router.push("/login");
+        return;
+      }
+
+      localStorage.setItem("access_token", newToken[0].access_token as string);
+
+      // Retry to send the data to DB
+      const newResponse: false | Message = await ProductApi.addToWishlist(
+        newToken[0].access_token,
+        product_id
+      );
+      // console.log(newResponse);
+      if (newResponse === false) {
+        setDisableButton(false);
+        setMessage("Failed to add the item to the wishlist");
+        return;
+      }
+
+      setMessage(newResponse[0].message);
+      setAlert(true);
+      setDisableButton(true);
+      return;
+    }
+
+    setMessage(response[0].message as string);
+    setAlert(true);
+    setDisableButton(true);
+    return;
+  }
+
   return (
     <nav className="flex items-center justify-between px-4 py-2">
+      {/* Alert */}
+      {alert && (
+        <Alert
+          message={message}
+          isOpen={alert}
+          onConfirm={() => setAlert(false)}
+        />
+      )}
+
       {/* Back Arrow */}
       <button
         onClick={() => router.back()}
@@ -114,7 +164,8 @@ export default function Navigator({ favorite, title, product_id }: Props) {
         <button
           className="text-xl text-gray-700"
           aria-label="Favorite"
-          disabled={isLoading}
+          onClick={addToWishlist}
+          disabled={disableButton}
         >
           <Image
             src={
