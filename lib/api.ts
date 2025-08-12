@@ -3,6 +3,12 @@ import type { Message } from "@/types/Message";
 import type { Token } from "@/types";
 import type { Cart } from "@/types/cart";
 import type { Coupon } from "@/types/coupon";
+import type {
+  NominatimResponse,
+  AddressPayload,
+  ServerResponse,
+  Address,
+} from "@/types/Address";
 
 /**
  * ProductAPI class provides methods for interacting with product-related endpoints.
@@ -73,6 +79,28 @@ class ProductAPI {
     return data;
   }
 
+  public async addToWishlist(
+    token: string,
+    product_id: string
+  ): Promise<false | Message> {
+    const response = await fetch("http://localhost:3001/api/add-to-wishlist", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ product_id }),
+    });
+
+    if (response.status !== 201) {
+      return false;
+    }
+
+    const data = await response.json();
+
+    return data as Message;
+  }
+
   /**
    * Fetches a refresh token from the server using HTTP-only cookies.
    *
@@ -118,18 +146,22 @@ class ProductAPI {
    * ```
    */
   public async getBestDeals(): Promise<Product | boolean> {
-    const response = await fetch("http://localhost:3001/api/best-deal", {
-      method: "GET",
-    });
+    try {
+      const response = await fetch("http://localhost:3001/api/best-deal", {
+        method: "GET",
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (response.status !== 200) {
-      console.warn("API error:", data[0].message as string);
+      if (response.status !== 200) {
+        console.warn("API error:", data[0].message as string);
+        return false;
+      }
+
+      return data as Product;
+    } catch (error) {
       return false;
     }
-
-    return data as Product;
   }
 
   /**
@@ -215,6 +247,7 @@ class ProductAPI {
 
     return data as Cart;
   }
+
   public async getCoupons(token: string): Promise<Coupon | false> {
     const response = await fetch("http://localhost:3001/api/coupons", {
       method: "GET",
@@ -256,6 +289,133 @@ class ProductAPI {
     }
 
     return message as Message;
+  }
+
+  /**
+   * Fetches the display name of an address from OpenStreetMap using coordinates.
+   *
+   * @param lat - The latitude.
+   * @param lon - The longitude.
+   * @returns A promise that resolves to the full address string, or null if not found.
+   */
+  public async getAddressDisplayName(
+    lat: number,
+    lon: number
+  ): Promise<string | null> {
+    console.log(lat, lon);
+    // Construct the Nominatim API URL for reverse geocoding.
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          // IMPORTANT: Add a descriptive User-Agent header.
+          // Nominatim's usage policy requires this.
+          // Replace 'MyAppName/1.0 (your-email@example.com)' with your app's details.
+          "User-Agent": "FR Grocery APP/1.0 (frgrocery1@gmail.com)",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.statusText}`);
+      }
+
+      const data: NominatimResponse = await response.json();
+
+      // The API can return a 200 OK with an error message in the JSON body.
+      if (data.error) {
+        console.error("API Error:", data.error);
+        return null;
+      }
+
+      return data.display_name || null;
+    } catch (error) {
+      console.error("Failed to fetch address:", error);
+      return null;
+    }
+  }
+
+  /**
+   * Sends address data to a server using the POST method with an Authorization header.
+   *
+   * @param payload - The object containing latitude, longitude, and a label.
+   * @param token - The authorization token (e.g., a JWT) for the request header.
+   * @returns A promise that resolves to the server's parsed JSON response, or null if the request fails.
+   */
+  public async sendAddressData(
+    payload: AddressPayload,
+    token: string
+  ): Promise<ServerResponse | null> {
+    const url = "http://localhost:3001/api/add-address";
+    console.log(payload);
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          // Specifies that the body of this request is in JSON format
+          "Content-Type": "application/json",
+          // Adds the authorization header, using the standard Bearer Token scheme
+          authorization: `Bearer ${token}`,
+        },
+        // Converts the JavaScript payload object into a JSON string for transmission
+        body: JSON.stringify({
+          lat: payload.lat,
+          lng: payload.lon,
+          label: payload.label,
+        }),
+      });
+
+      // Parse the JSON response body from the server
+      const data: ServerResponse = await response.json();
+      console.log(data);
+
+      // If the response is not 'ok' (e.g., status codes 401, 404, 500), throw an error
+      if (!response.ok) {
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error(
+        "❌ An error occurred while sending data to the server:",
+        error
+      );
+      return null;
+    }
+  }
+
+  /**
+   * Fetches a list of addresses from the server.
+   *
+   * @param token - The authorization token required for the API call.
+   * @returns A promise that resolves to an array of addresses, or null if an error occurs.
+   */
+  public async getUserAddress(token: string): Promise<Address[] | null> {
+    const url = "http://localhost:3001/api/address";
+
+    try {
+      const response = await fetch(url, {
+        method: "GET", // Method for fetching data
+        headers: {
+          // Add the Authorization header with the Bearer token
+          authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      // Check if the server responded with an error status
+      if (!response.ok) {
+        return null;
+      }
+
+      const result: Address[] = await response.json();
+      console.log(result);
+      return result as Address[];
+    } catch (error) {
+      console.error("❌ Failed to fetch addresses:", error);
+      return null;
+    }
   }
 }
 

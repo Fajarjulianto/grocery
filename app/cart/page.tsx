@@ -22,7 +22,7 @@ export default function CartPage() {
   const router = useRouter();
 
   // Context to update total price
-  const { updateItemTotal } = useCartContext();
+  const { updateItemTotal, removeCartTrigger } = useCartContext();
 
   const [cartItems, setCartItems] = React.useState<Cart | null>();
   const [error, setError] = React.useState<boolean>(false);
@@ -79,7 +79,7 @@ export default function CartPage() {
     }
 
     fetchCartItems();
-  }, []);
+  }, [removeCartTrigger, router, updateItemTotal]);
 
   if (error) {
     return (
