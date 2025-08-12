@@ -35,31 +35,12 @@ export default function HomeView({ staticCategories }: HomeViewProps) {
   const [isSortModalOpen, setSortModalOpen] = React.useState(false);
   const [sortOption, setSortOption] = React.useState(sortOptions[0]);
 
-  // const sortedProducts = useMemo(() => {
-  //   const sortableProducts = [...initialProducts];
-  //   switch (sortOption) {
-  //     case "Popularity":
-  //       return sortableProducts.sort((a, b) => (b.sold || 0) - (a.sold || 0));
-  //     case "Price: Low to High":
-  //       return sortableProducts.sort((a, b) => a.price - b.price);
-  //     case "Price: High to Low":
-  //       return sortableProducts.sort((a, b) => b.price - a.price);
-  //     case "Relevance":
-  //     default:
-  //       return initialProducts;
-  //   }
-  // }, [initialProducts, sortOption]);
-  // const { items: cartItems } = useCartStore();
-
   return (
-    <>
+    <div className="w-full px-4 sm:px-6 md:px-8 max-w-sm md:max-w-2xl mx-auto">
       <header className="py-4 flex justify-between items-center">
         <LocationHeader />
         <Link href="/cart" className="relative text-gray-600">
           <HiOutlineShoppingBag className="w-7 h-7" />
-          {/* <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
-            {cartItems.length}
-          </span> */}
         </Link>
       </header>
       <SearchFilter />
@@ -78,6 +59,6 @@ export default function HomeView({ staticCategories }: HomeViewProps) {
         selectedOption={sortOption}
         onSelectOption={setSortOption}
       />
-    </>
+    </div>
   );
 }
