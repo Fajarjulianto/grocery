@@ -9,7 +9,6 @@ import type {
   ServerResponse,
   Address,
 } from "@/types/Address";
-
 /**
  * ProductAPI class provides methods for interacting with product-related endpoints.
  * Handles product retrieval, wishlist management, authentication tokens, and cart operations.
@@ -418,5 +417,4 @@ class ProductAPI {
     }
   }
 }
-
 export default new ProductAPI();
