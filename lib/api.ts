@@ -145,7 +145,7 @@ class ProductAPI {
    * }
    * ```
    */
-  public async getBestDeals(): Promise<Product | boolean> {
+  public async getBestDeals(): Promise<Product | false> {
     try {
       const response = await fetch("http://localhost:3001/api/best-deal", {
         method: "GET",
@@ -178,7 +178,7 @@ class ProductAPI {
    * }
    * ```
    */
-  public async getPopularProducts(): Promise<Product | boolean> {
+  public async getPopularProducts(): Promise<Product | false> {
     const response = await fetch("http://localhost:3001/api/popular-products", {
       method: "GET",
     });
@@ -239,11 +239,11 @@ class ProductAPI {
       },
     });
 
-    const data = await response.json();
-
-    if (!Array.isArray(data)) {
+    if (response.status !== 200) {
       return false;
     }
+
+    const data = await response.json();
 
     return data as Cart;
   }
@@ -410,11 +410,141 @@ class ProductAPI {
       }
 
       const result: Address[] = await response.json();
-      console.log(result);
+      // console.log(result);
       return result as Address[];
     } catch (error) {
       console.error("❌ Failed to fetch addresses:", error);
       return null;
+    }
+  }
+
+  /**
+   * Increases the quantity of a specific item in the user's shopping cart.
+   *
+   * @param token - The Bearer authentication token for authorization.
+   * @param product_id - The unique identifier of the product whose quantity will be increased.
+   * @returns A promise that resolves to a message object on success (status 200), or false on failure.
+   *
+   * @example
+   * ```typescript
+   * const result = await ProductAPI.increaseCartQuantity(userToken, "product123");
+   * if (result) {
+   * console.log("Success:", result[0].message);
+   * } else {
+   * console.error("Failed to increase item quantity.");
+   * }
+   * ```
+   */
+  public async increaseCartQuantity(
+    token: string,
+    product_id: string
+  ): Promise<Message | false> {
+    const response = await fetch(
+      "http://localhost:3001/api/increase-cart-quantity",
+      {
+        method: "PUT",
+        headers: {
+          authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ product_id }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.status !== 200) {
+      console.warn("API error:", data);
+      return false;
+    }
+
+    return data as Message;
+  }
+
+  /**
+   * Decreases the quantity of a specific item in the user's shopping cart.
+   *
+   * @param token - The Bearer authentication token for authorization.
+   * @param product_id - The unique identifier of the product whose quantity will be decreased.
+   * @returns A promise that resolves to a message object on success (status 200), or false on failure.
+   *
+   * @example
+   * ```typescript
+   * const result = await ProductAPI.decreaseCartQuantity(userToken, "product123");
+   * if (result) {
+   * console.log("Success:", result[0].message);
+   * } else {
+   * console.error("Failed to decrease item quantity.");
+   * }
+   * ```
+   */
+  public async decreaseCartQuantity(
+    token: string,
+    product_id: string
+  ): Promise<Message | false> {
+    const response = await fetch(
+      "http://localhost:3001/api/decrease-cart-quantity",
+      {
+        method: "PUT",
+        headers: {
+          authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ product_id }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.status !== 200) {
+      console.warn("API error:", data);
+      return false;
+    }
+
+    return data as Message;
+  }
+
+  /**
+   * Authenticates a user with email and password.
+   *
+   * @param email - The user's email address.
+   * @param password - The user's password.
+   * @returns A promise that resolves to a Token object on success, or false on failure.
+   *
+   * @example
+   * ```typescript
+   * const credentials = { email: "user@example.com", password: "password123" };
+   * const tokenData = await ProductAPI.login(credentials.email, credentials.password);
+   * if (tokenData) {
+   * console.log("Login successful. Token:", tokenData.accessToken);
+   * } else {
+   * console.error("Login failed.");
+   * }
+   * ```
+   */
+  public async login(email: string, password: string): Promise<Token | false> {
+    try {
+      const response = await fetch("http://localhost:3001/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.status !== 200) {
+        // Asumsikan server mengirim pesan error dalam format { message: '...' }
+        const errorMessage = data.message || "Invalid credentials";
+        console.warn("API error:", errorMessage);
+        return false;
+      }
+
+      return data as Token;
+    } catch (error) {
+      console.error("An error occurred during login:", error);
+      return false;
     }
   }
 }

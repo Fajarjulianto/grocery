@@ -16,9 +16,8 @@ const LeafletMap = dynamic(() => import("@/components/map/LeafletMap"), {
 
 export default function Page(): JSX.Element {
   return (
-    // 1. Gunakan Fragment <> agar modal tidak terpengaruh layout flex
     <>
-      {/* Ini adalah kontainer utama untuk konten halaman Anda */}
+      {/* Main page container */}
       <div className="w-full max-w-sm md:max-w-screen bg-secondary h-screen flex flex-col items-center">
         <SearchMap />
         <div className="flex-1 w-full z-10">

@@ -1,9 +1,12 @@
 "use client";
-
+import Image from "next/image";
 // import { useState } from "react";
 // import { useCartStore } from "@/app/context/productContext";
+
+// types
 import type { Product } from "@/types/product";
-import Image from "next/image";
+import type { Review } from "@/types/reviews";
+import type { ProductCategory } from "@/types/product";
 
 // Font
 import { Inter } from "next/font/google";
@@ -25,19 +28,25 @@ import { useLoading } from "@/app/context/loading";
 
 interface Props {
   product: Product;
+  initialReviews: Review[] | false;
+  initialSimilarProducts: ProductCategory | false;
 }
 
 const inter = Inter({
   subsets: ["latin"],
 });
 
-export default function ProductDetails({ product }: Props) {
+export default function ProductDetails({
+  product,
+  initialReviews,
+  initialSimilarProducts,
+}: Props) {
   const data = product[0];
   // console.log(data);
 
   return (
     <div className={`w-full min-h-screen bg-secondary ${inter.className}`}>
-      <div className="max-w-sm md:max-w-2xl min-h-screen relative mx-auto p-4 space-y-6 bg-white">
+      <div className="max-w-screen md:max-w-2xl min-h-screen relative mx-auto p-4 space-y-6 bg-white">
         <Navigator
           title={"Prouct Details"}
           favorite={true}
@@ -49,6 +58,7 @@ export default function ProductDetails({ product }: Props) {
           width={300}
           height={300}
           className="w-full rounded-lg object-cover"
+          priority={true}
         />
 
         <h2 className="text-2xl font-semibold">{data.name}</h2>
@@ -71,7 +81,7 @@ export default function ProductDetails({ product }: Props) {
         />
 
         {/* Similar products */}
-        <SimilarProducts category={data.category} />
+        <SimilarProducts similarProduct={initialSimilarProducts} />
 
         {/* add to cart */}
         <AddToCart price={data.price} product_id={data.product_id} />

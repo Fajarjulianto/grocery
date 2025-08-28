@@ -1,43 +1,65 @@
+"use client";
+
+import React, { JSX, useEffect } from "react";
 import { SectionHeader } from "./SectionHeader";
 import { ProductCard } from "./ProductCard";
-
-import React, { JSX } from "react";
-
-// API codes
-import productAPI from "@/lib/api";
 
 // Types
 import type { Product } from "@/types/product";
 
 type ChildrenProps = {
+  bestDealsProduct: Product | boolean;
   hidden?: boolean;
 };
 
-export function BestDeals({ hidden }: ChildrenProps): JSX.Element {
-  const [bestDealsProduct, setBestDealsProduct] = React.useState<Product>([]);
-  const [success, setSuccess] = React.useState<boolean>(true);
-  React.useEffect(() => {
-    async function fetchBestDeals() {
-      const bestDeals = await productAPI.getBestDeals();
+/**
+ * A React component that fetches and displays a list of best deal products.
+ *
+ * @description This component is responsible for rendering the 'Best Deals' section.
+ * It utilizes the `useBestDealsStore` to manage state, including fetching data,
+ * handling loading states, and caching the results. It displays a loading indicator,
+ * a list of products upon success, or a fallback message.
+ *
+ * @param {object} props - The component props.
+ * @param {boolean} [props.hidden] - Optional. If true, the section header will be hidden.
+ * @returns {JSX.Element} The rendered Best Deals section.
+ *
+ * @example
+ * // Renders the Best Deals section with the header visible
+ * <BestDeals />
+ *
+ * @example
+ * // Renders the Best Deals section but hides the header
+ * <BestDeals hidden={true} />
+ */
+export function BestDeals({
+  bestDealsProduct,
+  hidden,
+}: ChildrenProps): JSX.Element {
+  // const { bestDealsProduct, isSuccess, isLoading, fetchBestDeals } =
+  //   useBestDealsStore();
 
-      if (!bestDeals) {
-        setSuccess(false);
-        return;
-      }
+  // useEffect(() => {
+  //   fetchBestDeals();
+  // }, [fetchBestDeals]);
 
-      setBestDealsProduct(bestDeals as Product);
-    }
+  // if (isLoading) {
+  //   return (
+  //     <section>
+  //       <SectionHeader title="Best Deal" hidden={hidden} />
+  //       <div className="text-primary">Loading best deals...</div>
+  //     </section>
+  //   );
+  // }
 
-    fetchBestDeals();
-  }, []);
   return (
     <section>
       <SectionHeader title="Best Deal" hidden={hidden} />
 
-      {success ? (
+      {bestDealsProduct !== false && Array.isArray(bestDealsProduct) ? (
         <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 w-full">
-          {bestDealsProduct.map((product, index) => (
-            <span key={index}>
+          {bestDealsProduct.map((product) => (
+            <span key={product.id}>
               <ProductCard
                 id={product.product_id}
                 image={product.image}

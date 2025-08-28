@@ -1,5 +1,4 @@
 type Product = {
-  // types/product.ts
   id: string;
   created_at: string;
   name: string;

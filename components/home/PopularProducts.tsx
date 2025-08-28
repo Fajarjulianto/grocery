@@ -1,3 +1,5 @@
+"use client";
+
 import React, { JSX } from "react";
 import Image from "next/image";
 
@@ -10,28 +12,21 @@ import { ProductCard } from "../ui/ProductCard";
 
 // Types
 import type { Product } from "@/types/product";
-export default function PopularProducts(): JSX.Element {
-  const [popularProduct, setPopularProduct] = React.useState<Product>([]);
-  const [success, setSuccess] = React.useState<boolean>(true);
-  React.useEffect(() => {
-    async function fetchBestDeals() {
-      const bestDeals = await productAPI.getBestDeals();
 
-      if (!bestDeals) {
-        setSuccess(false);
-        return;
-      }
+interface Props {
+  popularProduct: Product | false;
+}
+export default function PopularProducts({
+  popularProduct,
+}: Props): JSX.Element {
+  // const [popularProduct, setPopularProduct] = React.useState<Product>([]);
+  // const [success, setSuccess] = React.useState<boolean>(true);
 
-      setPopularProduct(bestDeals as Product);
-    }
-
-    fetchBestDeals();
-  }, []);
   return (
     <section>
       <SectionHeader title="Popular Products" />
 
-      {success ? (
+      {popularProduct !== false || Array.isArray(popularProduct) ? (
         <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 w-full">
           {popularProduct.map((product, index) => (
             <span key={index}>

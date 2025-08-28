@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from 'react';
-import { Product } from '@/types';
-import { CategoryHeader } from '@/components/ui/CategoryHeader';
-import { CategorySidebar } from '@/components/ui/CategorySidebar';
-import { ProductGridCard } from '@/components/ui/ProductGridCard';
+import { useState } from "react";
+import { Product } from "@/types/product";
+import { CategoryHeader } from "@/components/ui/CategoryHeader";
+import { CategorySidebar } from "@/components/ui/CategorySidebar";
+import { ProductGridCard } from "@/components/ui/ProductGridCard";
 
 interface ApiProduct extends Product {
   subCategory: string;
@@ -23,10 +23,13 @@ interface CategoryViewProps {
   pageTitle: string;
 }
 
-export default function CategoryView({ initialData, pageTitle }: CategoryViewProps) {
-
-  const [selectedCategory, setSelectedCategory] = useState(initialData.subCategories[0]?.name || '');
-
+export default function CategoryView({
+  initialData,
+  pageTitle,
+}: CategoryViewProps) {
+  const [selectedCategory, setSelectedCategory] = useState(
+    initialData.subCategories[0]?.name || ""
+  );
 
   const filteredProducts = initialData.products.filter(
     (product) => product.subCategory === selectedCategory
@@ -45,8 +48,8 @@ export default function CategoryView({ initialData, pageTitle }: CategoryViewPro
             />
             <main className="w-3/4">
               <div className="grid grid-cols-2 gap-4">
-                {filteredProducts.map((product) => (
-                  <ProductGridCard key={product.id} product={product} />
+                {filteredProducts.map((product, index) => (
+                  <ProductGridCard key={index} product={product} />
                 ))}
               </div>
             </main>

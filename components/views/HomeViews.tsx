@@ -1,5 +1,3 @@
-"use client";
-
 import React, { JSX } from "react";
 import Link from "next/link";
 
@@ -8,21 +6,23 @@ import { SearchFilter } from "@/components/ui/SearchFilter";
 import { CategoryGrid } from "@/components/ui/CategoryGrid";
 import { PromoBanner } from "@/components/ui/PromoBanner";
 import { BestDeals } from "@/components/ui/BestDeals";
-import { SortModal } from "@/components/ui/SortModal";
 import LocationHeader from "@/components/ui/LocationHeader";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
 import PopularProducts from "../home/PopularProducts";
 
 // Types
-import type { Category, Product } from "@/types/product";
+import type { Category } from "@/types/UI";
+import type { Product } from "@/types/product";
 
 interface HomeViewProps {
-  initialProducts: Product[];
   staticCategories: Category[];
 }
 interface SearchFilter {
   onSortClick?: () => void;
 }
+
+// API
+import ProductAPI from "@/lib/api";
 
 const sortOptions = [
   "Relevance",
@@ -31,10 +31,13 @@ const sortOptions = [
   "Price: High to Low",
 ];
 
-export default function HomeView({ staticCategories }: HomeViewProps) {
-  const [isSortModalOpen, setSortModalOpen] = React.useState(false);
-  const [sortOption, setSortOption] = React.useState(sortOptions[0]);
+export default async function HomeView({
+  staticCategories,
+}: HomeViewProps): Promise<JSX.Element> {
+  // Product data from server
+  const popularProduct: false | Product = await ProductAPI.getPopularProducts();
 
+  const bestDeals: boolean | Product = await ProductAPI.getBestDeals();
   return (
     <div className="w-full px-4 sm:px-6 md:px-8 max-w-sm md:max-w-2xl mx-auto">
       <header className="py-4 flex justify-between items-center">
@@ -48,17 +51,17 @@ export default function HomeView({ staticCategories }: HomeViewProps) {
       <div className="space-y-8 mt-6">
         <CategoryGrid categories={staticCategories} />
         <PromoBanner />
-        <BestDeals />
-        <PopularProducts />
+        <BestDeals bestDealsProduct={bestDeals} />
+        <PopularProducts popularProduct={popularProduct} />
       </div>
 
-      <SortModal
+      {/* <SortModal
         isOpen={isSortModalOpen}
         onClose={() => setSortModalOpen(false)}
         options={sortOptions}
         selectedOption={sortOption}
         onSelectOption={setSortOption}
-      />
+      /> */}
     </div>
   );
 }

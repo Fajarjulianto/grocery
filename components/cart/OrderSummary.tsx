@@ -1,10 +1,14 @@
 "use client";
 
 import React from "react";
-import { FiChevronRight } from "react-icons/fi";
+import dynamic from "next/dynamic";
 
 // Components
-import CouponSelection from "@/components/cart/CouponSelection";
+// import CouponSelection from "@/components/cart/CouponSelection";
+const CouponSelection = dynamic(
+  () => import("@/components/cart/CouponSelection")
+);
+
 import OrderDetails from "./OrderDetails";
 import GrandTotal from "./GrandTotal";
 

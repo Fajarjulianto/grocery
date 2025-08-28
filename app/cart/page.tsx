@@ -1,87 +1,58 @@
 "use client";
-import React from "react";
-
+import React, { useEffect, JSX } from "react";
 import { useRouter } from "next/navigation";
+import { useCartStore } from "@/store/CartStore";
+
+// Types
+import type { Product } from "@/types/product";
+
+interface ProductProps {
+  bestDealsData: Product | false;
+}
 
 // Components
 import CartItems from "@/components/ui/CartItem";
 import { FiChevronLeft } from "react-icons/fi";
 import { BestDeals } from "@/components/ui/BestDeals";
 
-// types
-import type { Cart } from "@/types/cart";
-
-// API
-import ProductAPI from "@/lib/api";
-import { Token } from "@/types";
-
 // Context
-import { useCartContext } from "@/app/context/cartContext";
+import { useCartContext } from "../context/cartContext";
 
-export default function CartPage() {
+export default function CartPage({ bestDealsData }: ProductProps): JSX.Element {
   const router = useRouter();
 
-  // Context to update total price
-  const { updateItemTotal, removeCartTrigger } = useCartContext();
+  // Get state and actions from the Zustand store
+  // Store
+  const { cartItems, isLoading, fetchCart } = useCartStore();
 
-  const [cartItems, setCartItems] = React.useState<Cart | null>();
-  const [error, setError] = React.useState<boolean>(false);
+  // Context
+  const { updateItemTotal } = useCartContext();
 
-  React.useEffect(() => {
-    async function fetchCartItems() {
-      const token = localStorage.getItem("access_token") as string;
-      const cartData: false | Cart = await ProductAPI.getCartItems(token);
+  // Use useEffect to call fetchCart when the component mounts
+  useEffect(() => {
+    fetchCart(router, false);
+  }, [fetchCart, router]); // Dependency array
 
-      if (!cartData || !Array.isArray(cartData)) {
-        const newToken: false | Token = await ProductAPI.getRefreshToken();
+  useEffect(() => {
+    const totalPrice = cartItems.reduce(
+      (acc, item) => acc + item.final_price * item.quantity,
+      0
+    );
 
-        if (!newToken || !Array.isArray(newToken)) {
-          router.push("/login");
-          return;
-        }
+    updateItemTotal(totalPrice);
+  }, [cartItems, updateItemTotal]);
 
-        // console.log("New token:", newToken);
+  // 1. Display Loading UI
+  if (isLoading) {
+    return (
+      <div className="w-full flex justify-center items-center font-inter min-h-screen p-4">
+        <p className="text-lg text-gray-600">Loading your cart...</p>
+      </div>
+    );
+  }
 
-        const newCartData: false | Cart = await ProductAPI.getCartItems(
-          newToken[0].access_token as string
-        );
-
-        if (!newCartData || !Array.isArray(newCartData)) {
-          setError(true);
-          return;
-        }
-
-        const totalPrice: number = newCartData.reduce(
-          (accumulator, currentValue) => {
-            return (
-              accumulator + currentValue.final_price * currentValue.quantity
-            );
-          },
-          0
-        );
-        // console.log(newCartData);
-        console.log(totalPrice);
-        updateItemTotal(totalPrice);
-        setCartItems(newCartData as Cart);
-        return;
-      }
-      const totalPrice: number = cartData.reduce(
-        (accumulator, currentValue) => {
-          return accumulator + currentValue.final_price * currentValue.quantity;
-        },
-        0
-      );
-
-      updateItemTotal(totalPrice);
-      setCartItems(cartData);
-      // console.log(cartData);
-      return;
-    }
-
-    fetchCartItems();
-  }, [removeCartTrigger, router, updateItemTotal]);
-
-  if (error) {
+  // 2. Display if cart is empty
+  if (cartItems.length === 0) {
     return (
       <div className="w-full bg-white flex flex-col items-center justify-center font-inter min-h-screen p-4">
         <h1 className="text-2xl font-bold mb-2">Your Cart is Empty</h1>
@@ -98,6 +69,7 @@ export default function CartPage() {
     );
   }
 
+  // 3. Display cart items
   return (
     <div className="w-full flex justify-center font-inter">
       <div className="relative bg-white w-full max-w-screen-lg mx-auto shadow-x-lg">
@@ -111,23 +83,22 @@ export default function CartPage() {
 
         <main className="p-4">
           <div>
-            {cartItems &&
-              cartItems.map((item, index) => (
-                <CartItems
-                  product_id={item.product_id}
-                  key={index}
-                  image={item.image}
-                  name={item.name}
-                  price={item.final_price}
-                  quantity={item.quantity}
-                />
-              ))}
+            {cartItems.map((item, index) => (
+              <CartItems
+                product_id={item.product_id}
+                key={index}
+                image={item.image}
+                name={item.name}
+                price={item.final_price}
+                quantity={item.quantity}
+              />
+            ))}
           </div>
           <div className="mt-8">
             <h2 className="text-xl font-bold text-gray-800 mb-4">
               Before you Checkout
             </h2>
-            <BestDeals hidden={true} />
+            <BestDeals bestDealsProduct={bestDealsData} hidden={true} />
           </div>
         </main>
       </div>

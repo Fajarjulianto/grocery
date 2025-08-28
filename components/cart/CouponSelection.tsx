@@ -13,92 +13,76 @@ import {
 import { useCartContext } from "@/app/context/cartContext";
 
 // Types
-import type { Coupon } from "@/types/coupon";
-import type { Token } from "@/types";
+import type { Coupon, SelectedCoupon } from "@/types/coupon";
+
+// Auth
+import { useApiWithAuth } from "@/hooks/auth";
 
 // API
 import ProductAPI from "@/lib/api";
 
 export default function CouponSelection(): JSX.Element {
+  // Local state
   const [coupons, setCoupons] = React.useState<Coupon>([]);
-  const [selectedCoupon, setSelectedCoupon] = React.useState<Coupon[0] | null>(
-    null
-  );
+  const [selectedCoupon, setSelectedCoupon] =
+    React.useState<SelectedCoupon | null>();
   const [message, setMessage] = React.useState<string>("");
   const [error, setError] = React.useState<boolean>(false);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(true);
-  const [onSelectCoupon, setOnSelectCoupon] = React.useState<boolean>(false);
 
   // Context to update item total
-  const { itemTotal, updateDiscount, discount } = useCartContext();
+  const { itemTotal, updateDiscount, updateCouponCode } = useCartContext();
+
+  // Auth
+  const apiWithAuth = useApiWithAuth();
 
   React.useEffect(() => {
+    /**
+     * Fetches coupons using the auth-aware API hook.
+     */
     async function fetchCoupons() {
       try {
         setLoading(true);
-        const token = localStorage.getItem("access_token") as string;
 
-        const couponsResponse: false | Coupon = await ProductAPI.getCoupons(
-          token
-        );
+        const response = (await apiWithAuth(ProductAPI.getCoupons)) as Coupon;
 
-        // Retry to fetch coupons if the token is expired
-        if (couponsResponse === false || !Array.isArray(couponsResponse)) {
-          const newToken: false | Token = await ProductAPI.getRefreshToken();
-
-          if (!newToken || !Array.isArray(newToken)) {
-            setMessage("Please login again to fetch coupons.");
-            setError(true);
-            setLoading(false);
-            return;
-          }
-
-          const newCoupons: false | Coupon = await ProductAPI.getCoupons(
-            newToken[0].access_token as string
-          );
-
-          if (!newCoupons || !Array.isArray(newCoupons)) {
-            setMessage("There are no coupons available.");
-            setError(true);
-            setLoading(false);
-            return;
-          }
-
-          // console.log(newCoupons);
-          setCoupons(newCoupons);
-          setLoading(false);
-          return;
+        if (response && Array.isArray(response)) {
+          setCoupons(response);
+        } else {
+          setMessage("There are no coupons available.");
+          setError(true);
         }
-
-        // console.log("itemTotal:", itemTotal);
-
-        // console.log(couponsResponse);
-
-        setCoupons(couponsResponse);
-        setLoading(false);
       } catch (err) {
         console.error("Error fetching coupons:", err);
         setMessage("Failed to fetch coupons.");
         setError(true);
+      } finally {
         setLoading(false);
       }
     }
 
     fetchCoupons();
-  }, [onSelectCoupon, itemTotal, updateDiscount]);
+  }, [apiWithAuth]);
 
-  const handleCouponSelect = (coupon: Coupon[0]) => {
-    setSelectedCoupon(coupon);
+  // Function to update selected coupon
+  const handleCouponSelect = (index: number) => {
+    const selected = coupons[index];
+
+    // Update the state with the selected coupon
+    setSelectedCoupon(selected);
+    updateCouponCode(selected.coupon_code);
     setIsOpen(false);
+
+    // Calculating the discount value
     const discountValue: number =
-      (coupons[0].discount_percentage * itemTotal) / 100;
+      (selected.discount_percentage * itemTotal) / 100;
     updateDiscount(discountValue);
-    return;
   };
 
   const handleClearCoupon = () => {
     setSelectedCoupon(null); // Reset selected coupon
+    updateCouponCode("");
     updateDiscount(null);
     setIsOpen(false); // Close dropdown
     console.log("Coupon cleared"); // Log action instead of discount value
@@ -166,7 +150,7 @@ export default function CouponSelection(): JSX.Element {
           {selectedCoupon && (
             <div className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100">
               <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                <span className="text-gray-500 text-sm">×</span>
+                <span className="text-gray-500 text-sm">X</span>
               </div>
               <div
                 onClick={() => {
@@ -193,7 +177,7 @@ export default function CouponSelection(): JSX.Element {
                   ? "bg-green-50 border-l-4 border-green-500"
                   : ""
               } ${coupon.redeemed ? "opacity-50 cursor-not-allowed" : ""}`}
-              onClick={() => !coupon.redeemed && handleCouponSelect(coupon)}
+              onClick={() => !coupon.redeemed && handleCouponSelect(index)}
             >
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center ${

@@ -3,20 +3,23 @@
 import React, { JSX } from "react";
 import Image from "next/image";
 import { FaRegHeart } from "react-icons/fa";
-// import { useCartStore } from "@/app/context/productContext";
-// import type { Product } from "@/types/product";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Spinner from "../utils/Spinner";
+import Alert from "../utils/Alert";
 
 interface ProductCardProps {
   id: string;
   image: string;
   name: string;
   detail: string;
-  price?: number;
-  final_price: number;
+  price?: number | null;
+  final_price: number | null;
 }
+
+// Context
+import { useCartContext } from "@/app/context/cartContext";
+import { useCartStore } from "@/store/CartStore";
 
 export function ProductCard({
   id,
@@ -26,17 +29,27 @@ export function ProductCard({
   price,
   final_price,
 }: ProductCardProps): JSX.Element {
+  // Router
   const router = useRouter();
+
+  // Local state
   const [isLoading, setIsLoading] = React.useState(false);
   const [isAlertOpen, setIsAlertOpen] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState("");
+
+  // Context state
+  const { updateAddToCartTrigger } = useCartContext();
+
+  // Store
+  const { fetchCart } = useCartStore();
 
   // functions to Add to cart the items based in the user's token and product_id
   async function addToCart(product_id: string) {
     setIsLoading(true);
 
     try {
-      const token: string = localStorage.getItem("accessToken") as string;
+      const token: string = localStorage.getItem("access_token") as string;
+      console.log("localToken", token);
 
       const response = await fetch(`http://localhost:3001/api/add-to-cart`, {
         method: "POST",
@@ -64,7 +77,10 @@ export function ProductCard({
 
         const newAccessToken = await tokenResponse.json();
         // console.log(newAccessToken);
-        localStorage.setItem("accessToken", newAccessToken[0].access_token);
+        localStorage.setItem(
+          "accessToken",
+          newAccessToken[0].access_token as string
+        );
 
         const newResponse = await fetch(
           `http://localhost:3001/api/add-to-cart`,
@@ -82,13 +98,22 @@ export function ProductCard({
 
         const newData = await newResponse.json();
         // console.log(newData);
+        updateAddToCartTrigger((prev) => {
+          return !prev;
+        });
+        fetchCart(router, true);
         setIsAlertOpen(true);
         setAlertMessage(newData[0].message);
         return;
       } else {
         const data = await response.json();
+        updateAddToCartTrigger((prev) => {
+          return !prev;
+        });
+        fetchCart(router, true);
         setIsAlertOpen(true);
         setAlertMessage(data[0].message);
+        return;
       }
     } catch (error) {
       console.error("Error adding to cart:", error);
@@ -97,17 +122,6 @@ export function ProductCard({
       setIsLoading(false);
     }
   }
-
-  // const { addToWishlist, removeFromWishlist, isWishlisted } =
-  //   useWishlistStore();
-
-  // const handleWishlist = () => {
-  //   if (isWishlisted(product.id)) {
-  //     removeFromWishlist(product.id);
-  //   } else {
-  //     addToWishlist(product);
-  //   }
-  // };
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-4 flex-shrink-0 w-44 relative">
@@ -123,16 +137,20 @@ export function ProductCard({
         )} */}
       </button>
 
-      <div className="w-full h-24 relative mb-2 cursor-pointer">
+      <div className="w-full h-24 mb-2 cursor-pointer">
         <Link href={`/products/${id}`}>
-          <Image
-            src={image}
-            alt={name}
-            fill
-            style={{ objectFit: "contain" }}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="rounded-md"
-          />
+          <div className="relative w-full h-full">
+            <Image
+              src={image}
+              alt={name}
+              fill
+              style={{ objectFit: "contain" }}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="rounded-md"
+              quality={50}
+              priority={true}
+            />
+          </div>
         </Link>
       </div>
 
@@ -143,8 +161,12 @@ export function ProductCard({
 
       <div className="flex justify-between items-center">
         <div className="flex items-baseline gap-1">
-          <p className="text-gray-900 font-bold text-base">
-            {/* ${final_price.toFixed(2)} */}
+          <p
+            className={`text-gray-900 font-bold text-base ${
+              final_price === null ? "hidden" : "inline-block"
+            }`}
+          >
+            ${final_price !== null && final_price.toFixed(2)}
           </p>
           {price && (
             <p className="line-through text-gray-400 text-sm">{price}</p>
