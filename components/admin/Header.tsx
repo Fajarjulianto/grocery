@@ -2,8 +2,8 @@ import { FaBell, FaUserCircle } from "react-icons/fa";
 
 export default function Header() {
   return (
-    <header className="z-10 py-4 bg-white shadow-md">
-      <div className="flex container justify-center items-center h-full px-6 mx-auto text-purple-600">
+    <header className="z-10 py-4 bg-gray-800 shadow-md">
+      <div className="flex container justify-center items-center h-full px-6 mx-auto text-white">
         {/* Tombol Notifikasi */}
         <button
           className="relative align-middle rounded-md focus:outline-none focus:shadow-outline-purple"

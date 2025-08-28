@@ -15,7 +15,7 @@ type Product = {
   review: number | null;
   rating: number | null;
   message?: string;
-}[];
+};
 
 type ProductCategory = {
   // types/product.ts
@@ -46,5 +46,17 @@ export interface Category {
 type ErrorMessage = {
   message: string;
 }[];
+
+export interface Token {
+  token: string;
+}
+
+export type NewProductData = Omit<Product, "id" | "createdAt" | "updatedAt">;
+
+export type UpdateProductData = Partial<NewProductData>;
+
+export interface ApiResponseMessage {
+  message: string;
+}
 
 export { type Product, type ErrorMessage, type ProductCategory };

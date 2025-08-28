@@ -12,9 +12,9 @@ import {
 
 const navItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: FaTachometerAlt },
-  { href: "/admin/products", label: "Produk", icon: FaBoxOpen },
-  { href: "/admin/orders", label: "Pesanan", icon: FaShoppingCart },
-  { href: "/admin/customers", label: "Pelanggan", icon: FaUsers },
+  { href: "/admin/products", label: "Products", icon: FaBoxOpen },
+  { href: "/admin/orders", label: "Orders", icon: FaShoppingCart },
+  { href: "/admin/customers", label: "Customers", icon: FaUsers },
 ];
 
 export default function Sidebar() {
@@ -28,7 +28,7 @@ export default function Sidebar() {
           className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200 flex items-center"
         >
           <FaStore className="mr-2" />
-          Toko Kelontong
+          Grecery App
         </Link>
         <ul className="mt-6">
           {navItems.map((item) => {

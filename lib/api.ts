@@ -1,13 +1,13 @@
 import { type Product } from "@/types/product";
 import type { Message } from "@/types/Message";
-import type { Token } from "@/types";
+import type { Token } from "@/types/product";
 import type { Cart } from "@/types/cart";
 import type { Coupon } from "@/types/coupon";
 import {
   NewProductData,
   UpdateProductData,
   ApiResponseMessage,
-} from "@/types/index";
+} from "@/types/product";
 import type {
   NominatimResponse,
   AddressPayload,
