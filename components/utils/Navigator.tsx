@@ -11,7 +11,7 @@ import Alert from "./Alert";
 
 // types
 import type { Wishlist } from "@/types/wishlist";
-import type { Token } from "@/types";
+import type { Token } from "@/types/product";
 import type { Message } from "@/types/Message";
 
 type Props = {

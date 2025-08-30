@@ -7,7 +7,7 @@ import { useCartStore } from "@/store/CartStore";
 import type { Product } from "@/types/product";
 
 interface ProductProps {
-  bestDealsData: Product | false;
+  bestDealsData: Product[] | false;
 }
 
 // Components

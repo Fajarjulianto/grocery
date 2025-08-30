@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Cart } from "@/types/cart"; // Pastikan Anda mengimpor CartItem
-import type { Token } from "@/types";
+import type { Token } from "@/types/product";
 import ProductAPI from "@/lib/api";
 
 /**
@@ -127,6 +127,8 @@ export const useCartStore = create<CartState>()(
           if (!data) {
             const newTokenData: false | Token =
               await ProductAPI.getRefreshToken();
+
+            console.log(typeof newTokenData, newTokenData);
             if (!newTokenData || !Array.isArray(newTokenData)) {
               router.push("/login"); // Redirect if refresh fails
               set({ isLoading: false, cartItems: [], itemTotal: 0 });
