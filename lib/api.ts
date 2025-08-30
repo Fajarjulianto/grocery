@@ -121,7 +121,7 @@ class ProductAPI {
    * }
    * ```
    */
-  public async getRefreshToken(): Promise<Token | false> {
+  public async getRefreshToken(): Promise<false | Token> {
     const response = await fetch("http://localhost:3001/api/token", {
       method: "GET",
       credentials: "include",
@@ -130,7 +130,7 @@ class ProductAPI {
     const data = await response.json();
     // console.log(data);
 
-    if (!Array.isArray(data) || response.status !== 200) {
+    if (response.status !== 200) {
       return false;
     }
 
@@ -151,7 +151,7 @@ class ProductAPI {
    * }
    * ```
    */
-  public async getBestDeals(): Promise<Product | false> {
+  public async getBestDeals(): Promise<Product[] | false> {
     try {
       const response = await fetch("http://localhost:3001/api/best-deal", {
         method: "GET",
@@ -164,7 +164,7 @@ class ProductAPI {
         return false;
       }
 
-      return data as Product;
+      return data as Product[];
     } catch (error) {
       return false;
     }
@@ -184,7 +184,7 @@ class ProductAPI {
    * }
    * ```
    */
-  public async getPopularProducts(): Promise<Product | false> {
+  public async getPopularProducts(): Promise<Product[] | false> {
     const response = await fetch("http://localhost:3001/api/popular-products", {
       method: "GET",
     });
@@ -196,7 +196,7 @@ class ProductAPI {
       return false;
     }
 
-    return data as Product;
+    return data as Product[];
   }
 
   /**
@@ -423,7 +423,6 @@ class ProductAPI {
       return null;
     }
   }
-<<<<<<< HEAD
 
   /**
    * Increases the quantity of a specific item in the user's shopping cart.
@@ -554,122 +553,120 @@ class ProductAPI {
       return false;
     }
   }
-}
-=======
->>>>>>> d87e4615153fd0e481128a2ebd84184c1f22d2de
 
   /**
    * Menambahkan produk baru ke database.
    * @param productData - Objek berisi data produk baru.
    * @returns Promise yang resolve ke objek Product yang baru dibuat, atau string pesan error.
    */
-  async addProduct(productData: NewProductData): Promise<Product | string> {
-    try {
-      const response = await fetch(`${API_BASE_URL}/products`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(productData),
-      });
-      const result: Product | ApiResponseMessage = await response.json();
-      if (!response.ok) {
-        throw new Error(
-          (result as ApiResponseMessage).message ||
-            `Failed to add product with status: ${response.status}`
-        );
-      }
-      return result as Product;
-    } catch (error) {
-      console.error("API Error in addProduct:", error);
-      return error instanceof Error
-        ? error.message
-        : "An unknown error occurred";
-    }
-  }
+  // async addProduct(productData: NewProductData): Promise<Product | string> {
+  //   try {
+  //     const response = await fetch(`${API_BASE_URL}/products`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(productData),
+  //     });
+  //     const result: Product | ApiResponseMessage = await response.json();
+  //     if (!response.ok) {
+  //       throw new Error(
+  //         (result as ApiResponseMessage).message ||
+  //           `Failed to add product with status: ${response.status}`
+  //       );
+  //     }
+  //     return result as Product;
+  //   } catch (error) {
+  //     console.error("API Error in addProduct:", error);
+  //     return error instanceof Error
+  //       ? error.message
+  //       : "An unknown error occurred";
+  //   }
+  // }
 
-  /**
-   * Mengambil semua produk dari server.
-   * @returns Promise yang resolve ke array of Product, atau string pesan error.
-   */
-  async getAllProducts(): Promise<Product[] | string> {
-    try {
-      const response = await fetch(`${API_BASE_URL}/products`);
-      if (!response.ok) {
-        const errorResult: ApiResponseMessage = await response.json();
-        throw new Error(
-          errorResult.message ||
-            `Failed to fetch products with status: ${response.status}`
-        );
-      }
-      const result: Product[] = await response.json();
-      return result;
-    } catch (error) {
-      console.error("API Error in getAllProducts:", error);
-      return error instanceof Error
-        ? error.message
-        : "An unknown error occurred";
-    }
-  }
+  // /**
+  //  * Mengambil semua produk dari server.
+  //  * @returns Promise yang resolve ke array of Product, atau string pesan error.
+  //  */
+  // async getAllProducts(): Promise<Product[] | string> {
+  //   try {
+  //     const response = await fetch(`${API_BASE_URL}/products`);
+  //     if (!response.ok) {
+  //       const errorResult: ApiResponseMessage = await response.json();
+  //       throw new Error(
+  //         errorResult.message ||
+  //           `Failed to fetch products with status: ${response.status}`
+  //       );
+  //     }
+  //     const result: Product[] = await response.json();
+  //     return result;
+  //   } catch (error) {
+  //     console.error("API Error in getAllProducts:", error);
+  //     return error instanceof Error
+  //       ? error.message
+  //       : "An unknown error occurred";
+  //   }
+  // }
 
-  /**
-   * Mengupdate data produk yang sudah ada berdasarkan ID.
-   * @param id - ID dari produk yang akan diupdate.
-   * @param productData - Objek berisi data produk yang akan diupdate.
-   * @returns Promise yang resolve ke objek Product yang telah diupdate, atau string pesan error.
-   */
-  async updateProduct(
-    id: string,
-    productData: UpdateProductData
-  ): Promise<Product | string> {
-    try {
-      const response = await fetch(`${API_BASE_URL}/products/${id}`, {
-        method: "PUT", // atau PATCH, sesuaikan dengan implementasi backend Anda
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(productData),
-      });
-      const result: Product | ApiResponseMessage = await response.json();
-      if (!response.ok) {
-        throw new Error(
-          (result as ApiResponseMessage).message ||
-            `Failed to update product with status: ${response.status}`
-        );
-      }
-      return result as Product;
-    } catch (error) {
-      console.error("API Error in updateProduct:", error);
-      return error instanceof Error
-        ? error.message
-        : "An unknown error occurred";
-    }
-  }
+  // /**
+  //  * Mengupdate data produk yang sudah ada berdasarkan ID.
+  //  * @param id - ID dari produk yang akan diupdate.
+  //  * @param productData - Objek berisi data produk yang akan diupdate.
+  //  * @returns Promise yang resolve ke objek Product yang telah diupdate, atau string pesan error.
+  //  */
+  // async updateProduct(
+  //   id: string,
+  //   productData: UpdateProductData
+  // ): Promise<Product | string> {
+  //   try {
+  //     const response = await fetch(`${API_BASE_URL}/products/${id}`, {
+  //       method: "PUT", // atau PATCH, sesuaikan dengan implementasi backend Anda
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(productData),
+  //     });
+  //     const result: Product | ApiResponseMessage = await response.json();
+  //     if (!response.ok) {
+  //       throw new Error(
+  //         (result as ApiResponseMessage).message ||
+  //           `Failed to update product with status: ${response.status}`
+  //       );
+  //     }
+  //     return result as Product;
+  //   } catch (error) {
+  //     console.error("API Error in updateProduct:", error);
+  //     return error instanceof Error
+  //       ? error.message
+  //       : "An unknown error occurred";
+  //   }
+  // }
 
-  /**
-   * Menghapus produk berdasarkan ID.
-   * @param id - ID dari produk yang akan dihapus.
-   * @returns Promise yang resolve ke pesan sukses, atau string pesan error.
-   */
-  async deleteProduct(id: string): Promise<string> {
-    try {
-      const response = await fetch(`${API_BASE_URL}/products/${id}`, {
-        method: "DELETE",
-      });
-      const result: ApiResponseMessage = await response.json();
-      if (!response.ok) {
-        throw new Error(
-          result.message ||
-            `Failed to delete product with status: ${response.status}`
-        );
-      }
-      return result.message || "Product deleted successfully";
-    } catch (error) {
-      console.error("API Error in deleteProduct:", error);
-      return error instanceof Error
-        ? error.message
-        : "An unknown error occurred";
-    }
-  }
+  // /**
+  //  * Menghapus produk berdasarkan ID.
+  //  * @param id - ID dari produk yang akan dihapus.
+  //  * @returns Promise yang resolve ke pesan sukses, atau string pesan error.
+  //  */
+  // async deleteProduct(id: string): Promise<string> {
+  //   try {
+  //     const response = await fetch(`${API_BASE_URL}/products/${id}`, {
+  //       method: "DELETE",
+  //     });
+  //     const result: ApiResponseMessage = await response.json();
+  //     if (!response.ok) {
+  //       throw new Error(
+  //         result.message ||
+  //           `Failed to delete product with status: ${response.status}`
+  //       );
+  //     }
+  //     return result.message || "Product deleted successfully";
+  //   } catch (error) {
+  //     console.error("API Error in deleteProduct:", error);
+  //     return error instanceof Error
+  //       ? error.message
+  //       : "An unknown error occurred";
+  //   }
+  // }
 }
+
 export default new ProductAPI();

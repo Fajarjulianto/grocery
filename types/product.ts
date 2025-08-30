@@ -46,9 +46,9 @@ type ErrorMessage = {
   message: string;
 }[];
 
-export interface Token {
-  token: string;
-}
+export type Token = {
+  access_token: string;
+}[];
 
 export type NewProductData = Omit<Product, "id" | "createdAt" | "updatedAt">;
 

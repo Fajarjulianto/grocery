@@ -8,7 +8,7 @@ import { ProductCard } from "./ProductCard";
 import type { Product } from "@/types/product";
 
 type ChildrenProps = {
-  bestDealsProduct: Product | boolean;
+  bestDealsProduct: Product[] | boolean;
   hidden?: boolean;
 };
 

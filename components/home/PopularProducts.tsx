@@ -1,12 +1,8 @@
 "use client";
 
 import React, { JSX } from "react";
-import Image from "next/image";
 
 // UI components
-
-// API
-import productAPI from "@/lib/api";
 import { SectionHeader } from "../ui/SectionHeader";
 import { ProductCard } from "../ui/ProductCard";
 
@@ -14,19 +10,16 @@ import { ProductCard } from "../ui/ProductCard";
 import type { Product } from "@/types/product";
 
 interface Props {
-  popularProduct: Product | false;
+  popularProduct: Product[] | false;
 }
 export default function PopularProducts({
   popularProduct,
 }: Props): JSX.Element {
-  // const [popularProduct, setPopularProduct] = React.useState<Product>([]);
-  // const [success, setSuccess] = React.useState<boolean>(true);
-
   return (
     <section>
       <SectionHeader title="Popular Products" />
 
-      {popularProduct !== false || Array.isArray(popularProduct) ? (
+      {popularProduct !== false ? (
         <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 w-full">
           {popularProduct.map((product, index) => (
             <span key={index}>

@@ -6,7 +6,7 @@ import { SearchFilter } from "@/components/ui/SearchFilter";
 import { CategoryGrid } from "@/components/ui/CategoryGrid";
 import { PromoBanner } from "@/components/ui/PromoBanner";
 import { BestDeals } from "@/components/ui/BestDeals";
-import LocationHeader from "@/components/ui/LocationHeader";
+import LocationHeader from "@/components/home/LocationHeader";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
 import PopularProducts from "../home/PopularProducts";
 
@@ -24,20 +24,21 @@ interface SearchFilter {
 // API
 import ProductAPI from "@/lib/api";
 
-const sortOptions = [
-  "Relevance",
-  "Popularity",
-  "Price: Low to High",
-  "Price: High to Low",
-];
+// const sortOptions = [
+//   "Relevance",
+//   "Popularity",
+//   "Price: Low to High",
+//   "Price: High to Low",
+// ];
 
 export default async function HomeView({
   staticCategories,
 }: HomeViewProps): Promise<JSX.Element> {
   // Product data from server
-  const popularProduct: false | Product = await ProductAPI.getPopularProducts();
+  const popularProduct: false | Product[] =
+    await ProductAPI.getPopularProducts();
 
-  const bestDeals: boolean | Product = await ProductAPI.getBestDeals();
+  const bestDeals: boolean | Product[] = await ProductAPI.getBestDeals();
   return (
     <div className="w-full px-4 sm:px-6 md:px-8 max-w-sm md:max-w-2xl mx-auto">
       <header className="py-4 flex justify-between items-center">

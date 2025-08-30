@@ -4,7 +4,7 @@ import { useCallback } from "react";
 
 // Types
 import type { Message } from "@/types/Message";
-import type { Token } from "@/types";
+import type { Token } from "@/types/product";
 
 // API
 import ProductAPI from "@/lib/api";
