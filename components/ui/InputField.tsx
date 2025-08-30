@@ -1,26 +1,38 @@
 "use client";
 
-import React from 'react';
+import React from "react";
 
 interface InputFieldProps {
   id: string;
   label: string;
   type: string;
   value: string;
+  name: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
 }
 
-export const InputField: React.FC<InputFieldProps> = ({ id, label, type, value, onChange, placeholder }) => {
+export const InputField: React.FC<InputFieldProps> = ({
+  id,
+  name,
+  label,
+  type,
+  value,
+  onChange,
+  placeholder,
+}) => {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-green-700 mb-1 ml-2">
+      <label
+        htmlFor={id}
+        className="block text-sm font-medium text-green-700 mb-1 ml-2"
+      >
         {label}
       </label>
       <input
         type={type}
         id={id}
-        name={id}
+        name={name}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
