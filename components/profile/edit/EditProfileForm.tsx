@@ -5,6 +5,9 @@
 import React, { JSX } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+
+// Components
+import { FaTrash } from "react-icons/fa";
 import { FiEdit2 } from "react-icons/fi";
 import { InputField } from "@/components/ui/InputField";
 import { ProfileFormSkeleton } from "./ProfileFormSkelaton";
@@ -28,7 +31,7 @@ export function EditProfileForm(): JSX.Element {
 
   React.useEffect(() => {
     async function fetchUserData() {
-      setIsLoading(true); // Mulai loading
+      setIsLoading(true);
       try {
         const response = (await apiWithAuth(
           UserAPI.getUserProfile
@@ -39,9 +42,9 @@ export function EditProfileForm(): JSX.Element {
         }
       } catch (error) {
         console.error("Failed to fetch user data:", error);
-        setFormData(null); // Set ke null jika ada error
+        setFormData(null);
       } finally {
-        setIsLoading(false); // Selesai loading, baik sukses maupun gagal
+        setIsLoading(false);
       }
     }
 
@@ -54,13 +57,11 @@ export function EditProfileForm(): JSX.Element {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => {
-      // Pastikan data sebelumnya ada dan bukan null
       if (!prev) return null;
 
-      // Buat salinan objek user yang akan diupdate
       const updatedUser: Users = { ...prev[0], [name]: value };
-
-      // Kembalikan tuple dengan user yang sudah diupdate
+      // console.log(updatedUser);
+      // console.log([updatedUser, prev[1]]);
       return [updatedUser, prev[1]];
     });
   };
@@ -68,20 +69,33 @@ export function EditProfileForm(): JSX.Element {
   /**
    * Handles the form submission.
    */
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Updated data:", formData);
-    // Di sini Anda akan mengirim data ke API
-    // await apiWithAuth(UserAPI.updateUserProfile(formData));
-    router.back();
+    // console.log("Updated data:", formData);
+
+    // Send updated data to the server
+    if (!formData) return;
+
+    const response = (await apiWithAuth(
+      UserAPI.editUserProfile,
+      formData[0].username,
+      formData[0].email,
+      formData[0].mobile
+    )) as boolean;
+
+    if (response) {
+      router.back();
+    } else {
+      router.refresh();
+    }
   };
 
-  // Tampilkan SKELETON jika sedang loading
+  // Display the skelaton loading
   if (isLoading) {
     return <ProfileFormSkeleton />;
   }
 
-  // Tampilkan pesan jika data tidak ditemukan setelah loading selesai
+  // Display error message if formData is null after loading
   if (!formData) {
     return (
       <div className="text-center text-gray-500">
@@ -90,11 +104,10 @@ export function EditProfileForm(): JSX.Element {
     );
   }
 
-  // Tampilkan FORM jika data sudah ada
   const [user, addresses] = formData; // Destructuring for cleaner access
 
   return (
-    <>
+    <form onSubmit={handleSubmit}>
       <div className="flex justify-center mb-6">
         <div className="relative">
           <Image
@@ -118,10 +131,10 @@ export function EditProfileForm(): JSX.Element {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="space-y-5">
         <InputField
           id="username"
-          name="username" // <-- Tambahkan `name` agar `handleChange` berfungsi
+          name="username"
           label="Name"
           type="text"
           value={user.username}
@@ -144,15 +157,26 @@ export function EditProfileForm(): JSX.Element {
           onChange={handleChange}
         />
         {formData[1].map((address, index) => (
-          <InputField
-            id="address"
-            name="address"
-            label="Enter Address"
-            type="text"
+          <span
+            className="flex justify-between items-center w-full mb-2"
             key={index}
-            value={address || ""}
-            onChange={handleChange}
-          />
+          >
+            <div className="w-9/10">
+              <InputField
+                id={`address-${index}`}
+                name="address"
+                label="Enter Address"
+                type="text"
+                value={address || ""}
+                disabled={true}
+                onChange={handleChange}
+              />
+            </div>
+
+            <button type="button" className="flex justify-center items-center">
+              <FaTrash className="text-red-500 ml-4 cursor-pointer hover:text-red-600" />
+            </button>
+          </span>
         ))}
 
         <div className="pt-6">
@@ -163,7 +187,7 @@ export function EditProfileForm(): JSX.Element {
             Update
           </button>
         </div>
-      </form>
-    </>
+      </div>
+    </form>
   );
 }

@@ -10,6 +10,7 @@ interface InputFieldProps {
   name: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
+  disabled?: boolean;
 }
 
 export const InputField: React.FC<InputFieldProps> = ({
@@ -20,6 +21,7 @@ export const InputField: React.FC<InputFieldProps> = ({
   value,
   onChange,
   placeholder,
+  disabled,
 }) => {
   return (
     <div>
@@ -30,6 +32,7 @@ export const InputField: React.FC<InputFieldProps> = ({
         {label}
       </label>
       <input
+        disabled={disabled}
         type={type}
         id={id}
         name={name}

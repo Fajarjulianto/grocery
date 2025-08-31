@@ -6,7 +6,7 @@ interface Users {
   username: string;
   email: string;
   profile_picture: string;
-  mobile: number;
+  mobile: string;
   created_at: string; // or Date if you plan to parse it
 }
 
