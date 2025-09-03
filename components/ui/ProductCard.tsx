@@ -12,9 +12,10 @@ interface ProductCardProps {
   id: string;
   image: string;
   name: string;
-  detail: string;
+  detail?: string;
   price?: number | null;
   final_price: number | null;
+  stock: number;
 }
 
 // Context
@@ -28,6 +29,7 @@ export function ProductCard({
   detail,
   price,
   final_price,
+  stock,
 }: ProductCardProps): JSX.Element {
   // Router
   const router = useRouter();
@@ -155,9 +157,7 @@ export function ProductCard({
       </div>
 
       <h3 className="font-semibold text-gray-800 text-sm truncate">{name}</h3>
-      <p className="text-gray-500 text-xs mb-3">
-        {/* {detail.slice(0, 20) || ""}... */}
-      </p>
+      <p className="text-gray-500 text-xs mb-2">stock: {stock}</p>
 
       <div className="flex justify-between items-center">
         <div className="flex items-baseline gap-1">
