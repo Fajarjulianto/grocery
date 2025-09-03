@@ -66,6 +66,7 @@ export function BestDeals({
                 name={product.name}
                 detail={product.detail}
                 price={product.price}
+                stock={product.stock}
                 final_price={product.final_price}
               />
             </span>

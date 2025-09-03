@@ -28,6 +28,7 @@ export default function PopularProducts({
                 image={product.image}
                 name={product.name}
                 detail={product.detail}
+                stock={product.stock}
                 price={product.price}
                 final_price={product.final_price}
               />
