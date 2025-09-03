@@ -1,59 +1,36 @@
 "use client";
-import React, { JSX, useEffect } from "react";
-import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
 
-// Components
-// import WishlistItemCard from "@/components/wishlist/WishlistItemCart";
-const WishlistItemCard = dynamic(
-  () => import("@/components/wishlist/WishlistItemCart")
-);
+import React, { JSX, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import WishlistItemCard from "@/components/wishlist/WishlistItemCart";
 import { FiChevronLeft, FiHeart } from "react-icons/fi";
 import { BottomNavBar } from "@/components/ui/BottomNavbar";
-import LoadingAnimation from "@/components/utils/LoadingAnimation";
-
-// Custom hooks
-import { useApiWithAuth } from "@/hooks/auth";
-
-// Store
 import { useWishlistStore } from "@/store/WishlistStore";
+import type { WishlistProductList } from "@/types/wishlist";
 
-export default function WishlistPage(): JSX.Element {
+type Props = {
+  initialItems: WishlistProductList;
+};
+
+/**
+ * Ini adalah Client Component. Ia berjalan di browser dan menangani UI & interaksi.
+ */
+export default function WishlistClientPage({
+  initialItems,
+}: Props): JSX.Element {
   const router = useRouter();
 
-  // Local state
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  // Gunakan state dan actions dari Zustand store Anda
+  const { items, setItems } = useWishlistStore();
 
-  // Store
-  const { fetchWishlist, items } = useWishlistStore();
-
-  const ApiWithAuth = useApiWithAuth();
-
+  // Hidrasi (isi) store dengan data dari server saat komponen pertama kali dimuat
   useEffect(() => {
-    const getWishlist = async () => {
-      setIsLoading(true);
-      try {
-        await fetchWishlist(ApiWithAuth);
-      } catch (error) {
-        console.error("Failed to fetch wishlist:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    setItems(initialItems);
+  }, [initialItems, setItems]);
 
-    getWishlist();
-  }, [ApiWithAuth, fetchWishlist]);
+  // Tidak ada lagi useEffect untuk fetching data di sini!
 
   const renderContent = () => {
-    // Display loading
-    if (isLoading) {
-      return (
-        <div className="flex justify-center items-center h-64">
-          <LoadingAnimation />
-        </div>
-      );
-    }
-
     if (items && items.length > 0) {
       return (
         <div>
@@ -61,13 +38,14 @@ export default function WishlistPage(): JSX.Element {
             <WishlistItemCard
               key={product.id}
               product={product}
-              isLCP={index === 0}
+              isLCP={index === 0} // Prop untuk prioritas LCP tetap digunakan
             />
           ))}
         </div>
       );
     }
 
+    // Tampilan jika wishlist kosong
     return (
       <div className="text-center py-24 px-4">
         <FiHeart size={60} className="mx-auto text-gray-300" />
@@ -90,8 +68,8 @@ export default function WishlistPage(): JSX.Element {
   return (
     <div className="w-full bg-secondary flex justify-center font-inter min-h-screen">
       <div className="relative bg-white w-full max-w-2xl mx-auto shadow-lg">
-        <header className="bg-white sticky top-0 z-10 p-4 border-b border-gray-200 flex items-center">
-          <button onClick={() => router.back()} className="text-gray-700">
+        <header /* ... header JSX ... */>
+          <button onClick={() => router.back()}>
             <FiChevronLeft size={24} />
           </button>
           <h1 className="text-lg font-bold text-center flex-grow">
@@ -99,11 +77,13 @@ export default function WishlistPage(): JSX.Element {
           </h1>
           <div className="w-6"></div>
         </header>
-
         <main className="pb-24">{renderContent()}</main>
-
         <BottomNavBar />
       </div>
     </div>
   );
 }
+
+// Jangan lupa tambahkan `setItems` ke dalam store Zustand Anda
+// Di WishlistStore.ts:
+// setItems: (items) => set({ items: items }),

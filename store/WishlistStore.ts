@@ -1,34 +1,78 @@
-import { create } from 'zustand';
-import type { Product } from '@/types';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+
+// Custom hook
+import type { useApiWithAuth } from "@/hooks/auth";
+
+// API
+import productAPI from "@/lib/api";
+
+// Types
+import type { WishlistProductList } from "@/types/wishlist";
+
+type ApiWithAuthFunc = ReturnType<typeof useApiWithAuth>;
 
 interface WishlistState {
-  items: Product[];
-  addToWishlist: (product: Product) => void;
-  removeFromWishlist: (productId: string) => void;
+  items: WishlistProductList;
+
+  fetchWishlist: (apiWithAuth: ApiWithAuthFunc) => Promise<void>;
+  removeFromWishlist: (
+    apiWithAuth: ApiWithAuthFunc,
+    productId: string
+  ) => Promise<boolean>;
   isWishlisted: (productId: string) => boolean;
 }
 
-export const useWishlistStore = create<WishlistState>((set, get) => ({
-  items: [
-    { id: '1', name: 'Surf Excel Easy Wash Detergent Power', detail: '500 ml', price: 12, originalPrice: 14, image: 'https://placehold.co/150x150/a5b4fc/4f46e5?text=Surf' },
-    { id: '3', name: 'Fresh Red Apples', detail: '1 kg', price: 8, originalPrice: 10, image: 'https://placehold.co/150x150/fca5a5/b91c1c?text=Apples' },
-  ],
-  
-  addToWishlist: (product) => {
-    const { items } = get();
-    if (!items.find(item => item.id === product.id)) {
-      set({ items: [...items, product] });
+export const useWishlistStore = create<WishlistState>()(
+  persist(
+    (set, get) => ({
+      items: [],
+
+      fetchWishlist: async (apiWithAuth) => {
+        console.log("Fetching wishlist from API...");
+        try {
+          const data = (await apiWithAuth(
+            productAPI.getWishList
+          )) as WishlistProductList;
+
+          if (data && Array.isArray(data)) {
+            set({ items: data });
+          }
+        } catch (error) {
+          console.error("Failed to fetch wishlist:", error);
+          set({ items: [] });
+        }
+      },
+
+      removeFromWishlist: async (apiWithAuth, productId: string) => {
+        const originalItems = get().items;
+
+        // Optimistic UI update
+        set((state) => ({
+          items: state.items.filter((item) => item.product_id !== productId),
+        }));
+
+        try {
+          await apiWithAuth(productAPI.removeItemFromWishlist, productId);
+          return true;
+        } catch (error) {
+          console.error("Failed to remove from wishlist:", error);
+          // Rollback jika gagal
+          set({ items: originalItems });
+          return false;
+        }
+      },
+
+      isWishlisted: (productId: string) => {
+        const { items } = get();
+        return items.some((item) => item.product_id === productId);
+      },
+    }),
+    {
+      name: "wishlist-storage",
+      partialize: (state) => ({
+        items: state.items,
+      }),
     }
-  },
-
-  removeFromWishlist: (productId) => {
-    set((state) => ({
-      items: state.items.filter((item) => item.id !== productId),
-    }));
-  },
-
-
-  isWishlisted: (productId) => {
-    return get().items.some(item => item.id === productId);
-  },
-}));
+  )
+);
