@@ -11,9 +11,8 @@ type Product = {
   final_price: number;
   discount_percentage: number;
   product_id: string;
-  review: number | null;
-  rating: number | null;
   message?: string;
+  stock: number;
 };
 
 type ProductCategory = {
@@ -27,8 +26,6 @@ type ProductCategory = {
   image: string;
   category: string;
   sold: number;
-  review: number | null;
-  rating: number | null;
   product_id: string;
   discount_percentage: number;
   final_price: number;
