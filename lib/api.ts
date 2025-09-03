@@ -8,12 +8,15 @@ import {
   UpdateProductData,
   ApiResponseMessage,
 } from "@/types/product";
+
 import type {
   NominatimResponse,
   AddressPayload,
   ServerResponse,
   Address,
 } from "@/types/Address";
+
+import type { Wishlist } from "@/types/wishlist";
 
 const API_BASE_URL = "http://localhost:3001/api";
 /**
@@ -67,20 +70,21 @@ class ProductAPI {
    * }
    * ```
    */
-  public async getWishList(token: string) {
-    console.log("token", token);
+  public async getWishList(token: string): Promise<false | Wishlist> {
+    // console.log("token", token);
     const response = await fetch(`http://localhost:3001/api/wishlist`, {
       method: "GET",
       headers: {
         authorization: `Bearer ${token}`,
       },
     });
+
+    if (response.status !== 200) {
+      return false;
+    }
     // console.log(response);
     const data = await response.json();
     // console.log(data);
-    if (!Array.isArray(data)) {
-      return false;
-    }
 
     return data;
   }
@@ -217,8 +221,8 @@ class ProductAPI {
    * ```
    */
   public async addToCart(
-    product_id: string,
-    token: string
+    token: string,
+    product_id: string
   ): Promise<string | boolean> {
     const response = await fetch("http://localhost:3001/api/add-to-cart", {
       method: "POST",
@@ -229,10 +233,10 @@ class ProductAPI {
       body: JSON.stringify({ product_id }),
     });
 
-    const data = await response.json();
     if (response.status !== 201) {
       return false;
     }
+    const data = await response.json();
 
     return data[0].message as string;
   }
@@ -550,6 +554,37 @@ class ProductAPI {
       return data as Token;
     } catch (error) {
       console.error("An error occurred during login:", error);
+      return false;
+    }
+  }
+
+  async removeItemFromWishlist(
+    token: string,
+    product_id: string
+  ): Promise<boolean> {
+    try {
+      console.log(product_id);
+      const response = await fetch(
+        "http://localhost:3001/api/remove-from-wishlist",
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ product_id }),
+        }
+      );
+
+      // if (response.status !== 200) {
+      //   return false;
+      // }
+      const data = await response.json();
+      console.log(data);
+
+      return true;
+    } catch (error) {
+      console.log(error);
       return false;
     }
   }
