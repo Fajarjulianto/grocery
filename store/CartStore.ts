@@ -1,8 +1,21 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { Cart } from "@/types/cart"; // Pastikan Anda mengimpor CartItem
+import type { Cart, CartItem } from "@/types/cart";
 import type { Token } from "@/types/product";
+
+import { useApiWithAuth } from "@/hooks/auth";
 import ProductAPI from "@/lib/api";
+
+type ApiWithAuthFunc = ReturnType<typeof useApiWithAuth>;
+
+interface Product {
+  product_id: string;
+  name: string;
+  final_price: number;
+  price: number;
+  image: string;
+  stock: number;
+}
 
 /**
  * Interface defining the shape of the cart store's state and actions.
@@ -13,6 +26,10 @@ interface CartState {
   isLoading: boolean;
   lastFetched: number | null;
 
+  addToCart: (
+    apiWithAuth: ApiWithAuthFunc,
+    product: Product
+  ) => Promise<boolean>;
   fetchCart: (router: any, forceFetch?: boolean) => Promise<void>;
   clearCart: () => void;
 
@@ -46,7 +63,7 @@ export const useCartStore = create<CartState>()(
        * Increases the quantity of a specific item in the cart.
        * @param {string} productId - The ID of the product to increase.
        */
-      increaseItemQuantity: (productId) => {
+      increaseItemQuantity: (productId: string) => {
         const newCartItems = get().cartItems.map((item) =>
           item.product_id === productId
             ? { ...item, quantity: item.quantity + 1 }
@@ -63,7 +80,7 @@ export const useCartStore = create<CartState>()(
        * If quantity becomes 0, the item is removed.
        * @param {string} productId - The ID of the product to decrease.
        */
-      decreaseItemQuantity: (productId) => {
+      decreaseItemQuantity: (productId: string) => {
         let itemExists = true;
         let newCartItems = get().cartItems.map((item) => {
           if (item.product_id === productId) {
@@ -93,7 +110,7 @@ export const useCartStore = create<CartState>()(
        * Removes an item completely from the cart.
        * @param {string} productId - The ID of the product to remove.
        */
-      removeItemFromCart: (productId) => {
+      removeItemFromCart: (productId: string) => {
         const newCartItems = get().cartItems.filter(
           (item) => item.product_id !== productId
         );
@@ -103,8 +120,70 @@ export const useCartStore = create<CartState>()(
         });
       },
 
+      /**
+       * Adds a product to the cart or increases its quantity if it already exists.
+       * Uses an optimistic update approach for a fast UI response.
+       * @param {Product} product - The product object to add to the cart.
+       */
+      addToCart: async (ApiWithAuth, product: Product) => {
+        const originalCartItems = get().cartItems;
+        const existingItem = originalCartItems.find(
+          (item) => item.product_id === product.product_id
+        );
+
+        let newCartItems: Cart;
+
+        if (existingItem) {
+          // If item exists, just increase the quantity
+          newCartItems = originalCartItems.map((item) =>
+            item.product_id === product.product_id
+              ? { ...item, quantity: item.quantity + 1 }
+              : item
+          );
+        } else {
+          // If item is new, add it to the cart with quantity 1
+          const newItem: CartItem = {
+            ...product,
+            quantity: 1,
+            created_at: new Date().toISOString(),
+            discount_percentage: 0,
+          };
+          newCartItems = [...originalCartItems, newItem];
+        }
+
+        // --- Optimistic Update ---
+        set({
+          cartItems: newCartItems,
+          itemTotal: calculateTotal(newCartItems),
+        });
+
+        // --- Background API Call ---
+        try {
+          // const token = localStorage.getItem("access_token");
+          // if (!token) throw new Error("User not authenticated");
+
+          const data = await ApiWithAuth(
+            ProductAPI.addToCart,
+            product.product_id
+          );
+
+          console.log(data);
+
+          console.log("Successfully added item to cart on the server.");
+          return true;
+        } catch (error) {
+          console.error("Failed to add item to cart:", error);
+
+          // --- Rollback ---
+          set({
+            cartItems: originalCartItems,
+            itemTotal: calculateTotal(originalCartItems),
+          });
+          return false;
+        }
+      },
+
       fetchCart: async (router, forceFetch) => {
-        // ... (fungsi fetchCart Anda tetap sama)
         const { lastFetched, cartItems } = get();
         const now: number = Date.now();
         if (

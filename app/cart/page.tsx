@@ -14,7 +14,7 @@ interface ProductProps {
 import CartItems from "@/components/ui/CartItem";
 import { FiChevronLeft } from "react-icons/fi";
 import { BestDeals } from "@/components/ui/BestDeals";
-
+import SkelatonUI from "@/components/cart/SkelatonUI";
 // Context
 import { useCartContext } from "../context/cartContext";
 
@@ -23,7 +23,7 @@ export default function CartPage({ bestDealsData }: ProductProps): JSX.Element {
 
   // Get state and actions from the Zustand store
   // Store
-  const { cartItems, isLoading, fetchCart } = useCartStore();
+  const { cartItems, isLoading, fetchCart, addToCart } = useCartStore();
 
   // Context
   const { updateItemTotal } = useCartContext();
@@ -40,33 +40,11 @@ export default function CartPage({ bestDealsData }: ProductProps): JSX.Element {
     );
 
     updateItemTotal(totalPrice);
-  }, [cartItems, updateItemTotal]);
+  }, [cartItems, updateItemTotal, addToCart]);
 
   // 1. Display Loading UI
   if (isLoading) {
-    return (
-      <div className="w-full flex justify-center items-center font-inter min-h-screen p-4">
-        <p className="text-lg text-gray-600">Loading your cart...</p>
-      </div>
-    );
-  }
-
-  // 2. Display if cart is empty
-  if (cartItems.length === 0) {
-    return (
-      <div className="w-full bg-white flex flex-col items-center justify-center font-inter min-h-screen p-4">
-        <h1 className="text-2xl font-bold mb-2">Your Cart is Empty</h1>
-        <p className="text-gray-600 mb-6">
-          Looks like you haven't added anything to your cart yet.
-        </p>
-        <button
-          onClick={() => router.push("/")}
-          className="bg-green-500 text-white font-bold py-3 px-6 rounded-lg"
-        >
-          Start Shopping
-        </button>
-      </div>
-    );
+    return <SkelatonUI />;
   }
 
   // 3. Display cart items
@@ -103,5 +81,24 @@ export default function CartPage({ bestDealsData }: ProductProps): JSX.Element {
         </main>
       </div>
     </div>
+    // <>
+    //   {cartItems.length > 0 ? (
+
+    //   ) : (
+    //     // 2. Display if cart is empty
+    //     <div className="w-full bg-white flex flex-col items-center justify-center font-inter min-h-screen p-4">
+    //       <h1 className="text-2xl font-bold mb-2">Your Cart is Empty</h1>
+    //       <p className="text-gray-600 mb-6">
+    //         Looks like you haven't added anything to your cart yet.
+    //       </p>
+    //       <button
+    //         onClick={() => router.push("/")}
+    //         className="bg-green-500 text-white font-bold py-3 px-6 rounded-lg"
+    //       >
+    //         Start Shopping
+    //       </button>
+    //     </div>
+    //   )}
+    // </>
   );
 }
