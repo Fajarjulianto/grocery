@@ -49,7 +49,7 @@ export default function CategoryView({
             <main className="w-3/4">
               <div className="grid grid-cols-2 gap-4">
                 {filteredProducts.map((product, index) => (
-                  <ProductGridCard key={index} product={product} />
+                  <ProductGridCard key={index} product={product as Product} />
                 ))}
               </div>
             </main>
