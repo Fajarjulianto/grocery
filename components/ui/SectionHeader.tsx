@@ -9,7 +9,7 @@ interface SectionHeaderProps {
 export const SectionHeader: React.FC<SectionHeaderProps> = ({
   title,
   hidden = false,
-  seeAllHref = "/categories",
+  seeAllHref = "/all-products",
 }) => (
   <div
     className={`flex justify-between items-center mb-4 ${

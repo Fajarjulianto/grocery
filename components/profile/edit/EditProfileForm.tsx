@@ -165,11 +165,11 @@ export function EditProfileForm(): JSX.Element {
               <InputField
                 id={`address-${index}`}
                 name="address"
-                label="Enter Address"
+                label={`Address ${index + 1}`}
                 type="text"
                 value={address || ""}
                 disabled={true}
-                onChange={handleChange}
+                onChange={() => {}}
               />
             </div>
 
