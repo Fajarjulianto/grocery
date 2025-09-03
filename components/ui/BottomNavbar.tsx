@@ -3,11 +3,12 @@ import { CiHeart } from "react-icons/ci";
 import { TbSmartHome } from "react-icons/tb";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
 import { CiUser } from "react-icons/ci";
+import { FiMail } from "react-icons/fi";
 
 const navItems = [
   { href: "/", icon: TbSmartHome, label: "Home", active: true },
   { href: "/wishlist", icon: CiHeart, label: "Wishlist", active: true },
-  { href: "/cart", icon: HiOutlineShoppingBag, label: "Cart", active: false },
+  { href: "/cart", icon: FiMail, label: "Cart", active: false },
   { href: "/profile", icon: CiUser, label: "Profile", active: true },
 ];
 
@@ -18,11 +19,11 @@ export const BottomNavBar = () => (
         key={item.label}
         href={item.href}
         className={`flex flex-col items-center gap-1 w-16 transition-colors ${
-          item.active ? "text-green-600" : "text-gray-500 hover:text-green-500"
+          item.active ? "text-primary" : "text-gray-500 hover:text-green-500"
         }`}
       >
         <item.icon
-          className="w-6 h-6"
+          className="w-6 h-6 text-primary"
           fill={item.active ? "currentColor" : "none"}
         />
       </Link>
