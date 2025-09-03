@@ -9,15 +9,16 @@ import type { Token } from "@/types/product";
 // API
 import ProductAPI from "@/lib/api";
 
+interface ApiCallFunction {
+  (token: string, ...args: any[]): Promise<false | Message | any>;
+}
+
 const useApiWithAuth = () => {
   const router = useRouter();
 
   return useCallback(
     async (
-      apiCall: (
-        token: string,
-        ...args: any[]
-      ) => Promise<false | Message | any>,
+      apiCall: ApiCallFunction,
       ...args: any[]
     ): Promise<false | Message | any> => {
       try {
