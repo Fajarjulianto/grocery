@@ -6,9 +6,6 @@ import { useRouter } from "next/navigation";
 // API
 import ProductAPI from "@/lib/api";
 
-// Types
-import type { Token } from "@/types";
-
 type Message = {
   text: string;
   type: string;

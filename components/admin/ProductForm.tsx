@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent } from "react";
-import { Product } from "@/types";
+import { Product } from "@/types/product";
 
 interface ProductFormProps {
   initialData: Product | null;
@@ -37,6 +37,21 @@ export default function ProductForm({
               type="text"
               name="name"
               defaultValue={initialData?.name || ""}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="category"
+              className="block text-gray-700 text-sm font-bold mb-2"
+            >
+              Category
+            </label>
+            <input
+              type="text"
+              name="category"
+              defaultValue={initialData?.category || ""}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               required
             />
@@ -81,7 +96,7 @@ export default function ProductForm({
             </label>
             <textarea
               name="description"
-              defaultValue={initialData?.description || ""}
+              defaultValue={initialData?.detail || ""}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             ></textarea>
           </div>
@@ -95,7 +110,7 @@ export default function ProductForm({
             <input
               type="text"
               name="imageUrl"
-              defaultValue={initialData?.imageUrl || ""}
+              defaultValue={initialData?.image || ""}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
