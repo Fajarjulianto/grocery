@@ -10,7 +10,7 @@ import { useMapContext } from "@/app/context/mapContext";
 import ProductAPI from "@/lib/api";
 
 // Types
-import type { Token } from "@/types";
+import type { Token } from "@/types/product";
 import type { ServerResponse } from "@/types/Address";
 
 /**
