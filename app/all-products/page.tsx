@@ -1,5 +1,7 @@
 // app/products/page.tsx
 
+// Components
+import SearchBar from "@/components/all-products/searchBar";
 import { CategorySidebar } from "@/components/ui/CategorySidebar";
 import ProductGrid from "@/components/all-products/ProductGrid";
 
@@ -11,23 +13,39 @@ import { fetchProducts } from "./actions";
 
 import { staticCategories } from "@/data/mockData";
 
-export default async function ProductsPage() {
-  const initialProducts = await fetchProducts();
+// The page component receives a `searchParams` prop by default
+export default async function ProductsPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const params = await searchParams;
+
+  // This function will return [] when the url has a category or a keyword params to prevent API call,
+  // so the initial product will be clear and will be replaced by product-by-category or search result
+  const initialProducts = await fetchProducts(
+    params?.category as string,
+    params?.keyword as string
+  );
+
+  // console.log("Current category from URL query:", params?.category);
 
   const categories = staticCategories;
 
   return (
     <div className="flex justify-center min-h-screen bg-secondary">
-      <div className="flex bg-white w-screen md:max-w-3xl">
-        <CategorySidebar subCategories={categories} />
-
-        <main className="flex-1 p-4">
-          <header className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold">Atta, Rice & Dal</h1>
-            <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
-          </header>
-          <ProductGrid initialProducts={initialProducts as Product[]} />
-        </main>
+      <div className="flex flex-col bg-white w-screen md:max-w-3xl relative">
+        <header className="fixed top-0 left-0 right-0 z-20 bg-secondary">
+          <div className="w-full md:max-w-3xl mx-auto bg-white">
+            <SearchBar />
+          </div>
+        </header>
+        <div className="flex relative">
+          <CategorySidebar subCategories={categories} />
+          <main className="flex w-3/4 ml-[25%] mt-15">
+            <ProductGrid initialProducts={initialProducts as Product[]} />
+          </main>
+        </div>
       </div>
     </div>
   );

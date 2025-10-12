@@ -42,6 +42,7 @@ export default function SimilarProducts({
               image={items.image || ""}
               detail={items.detail || ""}
               price={items.price || 0}
+              stock={items.stock}
               final_price={items.final_price || 0}
             />
           </span>

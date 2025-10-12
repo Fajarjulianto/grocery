@@ -18,16 +18,12 @@ import { Inter } from "next/font/google";
 import Navigator from "../utils/Navigator";
 import PriceAndDetails from "./PriceAndDetails";
 import AddToCart from "./AddToCart";
-import LoadingAnimation from "../utils/LoadingAnimation";
 import Reviews from "./Reviews";
 import SimilarProducts from "./SimilarProducts";
 import RatingDisplay from "./Rating";
 
-// Context
-import { useLoading } from "@/app/context/loading";
-
 interface Props {
-  product: Product;
+  product: Product[];
   initialReviews: Review[] | false;
   initialSimilarProducts: ProductCategory | false;
 }
@@ -50,7 +46,7 @@ export default function ProductDetails({
         <Navigator
           title={"Prouct Details"}
           favorite={true}
-          product_id={data.product_id}
+          product_id={data.id}
         />
         <Image
           src={data.image}
@@ -75,7 +71,7 @@ export default function ProductDetails({
         />
         {/* reviews */}
         <Reviews
-          product_id={data.product_id}
+          product_id={data.id}
           rating={data.rating as number}
           review={data.review as number}
         />
@@ -84,7 +80,7 @@ export default function ProductDetails({
         <SimilarProducts similarProduct={initialSimilarProducts} />
 
         {/* add to cart */}
-        <AddToCart price={data.price} product_id={data.product_id} />
+        <AddToCart price={data.price} product_id={data.id} />
       </div>
     </div>
   );

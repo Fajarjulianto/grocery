@@ -59,10 +59,10 @@ export default async function ProductPage({
   }
   const similarProduct = await getSimilarProducts(product[0].category);
 
-  const initialReviews = await getReviews(product[0].product_id);
+  const initialReviews = await getReviews(product[0].id);
   return (
     <ProductDetails
-      product={product as Product}
+      product={product as Product[]}
       initialReviews={initialReviews}
       initialSimilarProducts={similarProduct}
     />

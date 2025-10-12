@@ -52,7 +52,7 @@ export default function CartPage({ bestDealsData }: ProductProps): JSX.Element {
     <div className="w-full flex justify-center font-inter">
       <div className="relative bg-white w-full max-w-screen-lg mx-auto shadow-x-lg">
         <header className="bg-white sticky top-0 z-20 p-4 flex items-center">
-          <button onClick={() => router.back()} className="text-gray-700">
+          <button onClick={() => router.push("/")} className="text-gray-700">
             <FiChevronLeft size={24} />
           </button>
           <h1 className="text-lg font-bold text-center flex-grow">Checkout</h1>

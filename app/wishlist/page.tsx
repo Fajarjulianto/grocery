@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 
 // Components
-// import WishlistItemCard from "@/components/wishlist/WishlistItemCart";
 const WishlistItemCard = dynamic(
   () => import("@/components/wishlist/WishlistItemCart")
 );

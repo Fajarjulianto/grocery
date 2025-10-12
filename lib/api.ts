@@ -121,19 +121,24 @@ class ProductAPI {
    * ```
    */
   public async getRefreshToken(): Promise<false | Token> {
-    const response = await fetch("http://localhost:3001/api/token", {
-      method: "GET",
-      credentials: "include",
-    });
+    try {
+      const response = await fetch("http://localhost:3001/api/token", {
+        method: "GET",
+        credentials: "include",
+      });
 
-    const data = await response.json();
-    // console.log(data);
+      const data = await response.json();
+      // console.log(data);
 
-    if (response.status !== 200) {
+      if (response.status !== 200) {
+        return false;
+      }
+
+      return data as Token;
+    } catch (err) {
+      console.log(err);
       return false;
     }
-
-    return data as Token;
   }
 
   /**
@@ -531,6 +536,7 @@ class ProductAPI {
     try {
       const response = await fetch("http://localhost:3001/api/login", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },

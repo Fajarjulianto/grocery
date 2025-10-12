@@ -1,8 +1,11 @@
 "use client";
 
 import React, { JSX, Suspense } from "react";
+import Link from "next/link";
 import { CiLocationOn } from "react-icons/ci";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+
+// Types
 import type { Address } from "@/types/Address";
 
 // Lazy load the dropdown component
@@ -25,7 +28,7 @@ export default function AddressDisplay({ address }: Props): JSX.Element {
 
   //   console.log(address);
   // Format the address string for display
-  const formattedAddress = address[0].address;
+  const formattedAddress = address[0]?.address;
 
   return (
     <div className="relative">
@@ -37,12 +40,21 @@ export default function AddressDisplay({ address }: Props): JSX.Element {
         <div className="min-w-0">
           {/* Prevents text from overflowing */}
           <div className="flex items-center gap-1">
-            <h1
-              className={`font-bold text-lg truncate text-primary`}
-              title={address[0].label}
-            >
-              {address[0].label}
-            </h1>
+            {formattedAddress ? (
+              <h1
+                className={`font-bold text-lg truncate text-primary`}
+                title={address[0].label}
+              >
+                {address[0].label}
+              </h1>
+            ) : (
+              <div>
+                <h1>No address registered</h1>
+                <Link href={"/map"} className="text-primary text-sm">
+                  Click here to add address
+                </Link>
+              </div>
+            )}
             {isDropdownOpen ? (
               <IoIosArrowUp className="w-4 h-4 text-gray-600" />
             ) : (
@@ -58,7 +70,7 @@ export default function AddressDisplay({ address }: Props): JSX.Element {
         </div>
       </div>
 
-      {isDropdownOpen && (
+      {isDropdownOpen && formattedAddress ? (
         <Suspense
           fallback={
             <div className="absolute top-full left-0 mt-2 w-64 p-4 bg-white shadow-lg rounded-md z-50">
@@ -68,6 +80,8 @@ export default function AddressDisplay({ address }: Props): JSX.Element {
         >
           <AddressDropdown address={address as Address[]} />
         </Suspense>
+      ) : (
+        ""
       )}
     </div>
   );

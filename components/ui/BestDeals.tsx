@@ -61,7 +61,7 @@ export function BestDeals({
           {bestDealsProduct.map((product) => (
             <span key={product.id}>
               <ProductCard
-                id={product.product_id}
+                id={product.id}
                 image={product.image}
                 name={product.name}
                 detail={product.detail}

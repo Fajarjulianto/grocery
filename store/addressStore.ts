@@ -33,7 +33,7 @@ export const useAddressStore = create<AddressState>()(
        * Action to set the selected address by its index.
        */
       setSelectedAddress: (index: number) => {
-        set({ selectedAddressIndex: index });
+        set({ selectedAddressIndex: index || 0 });
       },
 
       /**

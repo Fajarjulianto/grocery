@@ -41,6 +41,7 @@ export default function Reviews({
 
   React.useEffect(() => {
     async function getReviews(): Promise<void> {
+      console.log(product_id);
       const res = await fetch(
         `http://localhost:3001/api/reviews?productID=${product_id}`,
         {
@@ -48,6 +49,7 @@ export default function Reviews({
         }
       );
       const data = await res.json();
+      console.log(data);
 
       setReviews(data);
     }

@@ -16,14 +16,14 @@ interface ProductCardProps {
   price?: number | null;
   final_price: number | null;
   stock: number;
-  discount_percentage?: number;
+  discount_percentage: number;
 }
 
 // Context
 import { useCartContext } from "@/app/context/cartContext";
 import { useCartStore } from "@/store/CartStore";
 
-export function ProductCard({
+export default function ProductCard({
   id,
   image,
   name,
@@ -53,7 +53,7 @@ export function ProductCard({
 
     try {
       const token: string = localStorage.getItem("access_token") as string;
-      console.log("localToken", token);
+      console.log(product_id);
 
       const response = await fetch(`http://localhost:3001/api/add-to-cart`, {
         method: "POST",
@@ -128,20 +128,15 @@ export function ProductCard({
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-4 flex-shrink-0 w-44 relative">
+    <div className="bg-white border border-gray-200 rounded-xl p-3 flex flex-col w-full relative min-w-35">
       <button
-        // onClick={handleWishlist}
-        className="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition-colors"
+        className="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition-colors z-10"
         aria-label="Toggle Wishlist"
       >
-        {/* {isWishlisted(product.id) ? (
-          <FaHeart className="w-5 h-5 text-red-500" />
-        ) : (
-          <FaRegHeart className="w-5 h-5" />
-        )} */}
+        <FaRegHeart className="w-5 h-5" />
       </button>
 
-      <div className="w-full h-24 mb-2 cursor-pointer">
+      <div className="w-full aspect-square mb-2 cursor-pointer">
         <Link href={`/products/${id}`}>
           <div className="relative w-full h-full">
             <Image
@@ -161,14 +156,15 @@ export function ProductCard({
       <h3 className="font-semibold text-gray-800 text-sm truncate">{name}</h3>
       <p className="text-gray-500 text-xs mb-2">stock: {stock}</p>
 
-      <div className="flex justify-between items-center">
+      {/* Price layout */}
+      <div className="mt-auto pt-2 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
         <div className="flex items-baseline gap-1">
           <p
             className={`text-gray-900 font-bold text-base ${
               final_price === null ? "hidden" : "inline-block"
             }`}
           >
-            ${final_price !== null && final_price.toFixed(2)}
+            ${final_price?.toFixed(2) ?? ""}
           </p>
           {discount_percentage !== null && (
             <p
@@ -180,18 +176,16 @@ export function ProductCard({
             </p>
           )}
         </div>
+
         <button
           onClick={() => addToCart(id)}
           disabled={isLoading}
-          className={`${
-            isLoading
-              ? "bg-primary cursor-not-allowed w-26 p-2"
-              : "bg-primary hover:bg-green-600"
-          } text-white rounded-lg p-4 px-5 w-12 h-8 flex items-center justify-center transition-colors text-sm`}
+          className="w-full sm:w-auto text-white bg-primary hover:bg-green-600 disabled:bg-primary disabled:cursor-not-allowed rounded-lg py-1.5 px-4 flex items-center justify-center transition-colors text-sm"
         >
           {isLoading ? <Spinner text={""} /> : "Add"}
         </button>
       </div>
+
       <Alert
         message={alertMessage}
         isOpen={isAlertOpen}

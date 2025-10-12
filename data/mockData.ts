@@ -39,7 +39,7 @@ export const staticCategories: Category[] = [
   },
   {
     id: 7,
-    name: "Masala, Oil & Dry Fruits",
+    name: "Oil",
     imageUrl: "/images/masalaoil.png",
     href: "/categories/spices",
   },

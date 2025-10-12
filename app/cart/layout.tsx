@@ -14,7 +14,7 @@ import ProductAPI from "@/lib/api";
 
 export default async function CartLayout() {
   // Product data from server
-  const bestDeals: boolean | Product = await ProductAPI.getBestDeals();
+  const bestDeals: false | Product[] = await ProductAPI.getBestDeals();
 
   return (
     <div className="bg-secondary flex justify-center min-h-screen relative">

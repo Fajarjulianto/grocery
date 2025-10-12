@@ -2,33 +2,33 @@
 
 import React, { JSX, useEffect } from "react";
 import { useRouter } from "next/navigation";
+
+// Components
 import WishlistItemCard from "@/components/wishlist/WishlistItemCart";
 import { FiChevronLeft, FiHeart } from "react-icons/fi";
 import { BottomNavBar } from "@/components/ui/BottomNavbar";
+
+// Context
 import { useWishlistStore } from "@/store/WishlistStore";
+
+// Types
 import type { WishlistProductList } from "@/types/wishlist";
 
 type Props = {
   initialItems: WishlistProductList;
 };
 
-/**
- * Ini adalah Client Component. Ia berjalan di browser dan menangani UI & interaksi.
- */
 export default function WishlistClientPage({
   initialItems,
 }: Props): JSX.Element {
   const router = useRouter();
 
-  // Gunakan state dan actions dari Zustand store Anda
-  const { items, setItems } = useWishlistStore();
+  // Context zustand
+  const { items } = useWishlistStore();
 
-  // Hidrasi (isi) store dengan data dari server saat komponen pertama kali dimuat
-  useEffect(() => {
-    setItems(initialItems);
-  }, [initialItems, setItems]);
-
-  // Tidak ada lagi useEffect untuk fetching data di sini!
+  // useEffect(() => {
+  //   setItems(initialItems);
+  // }, [initialItems, setItems]);
 
   const renderContent = () => {
     if (items && items.length > 0) {
@@ -38,14 +38,14 @@ export default function WishlistClientPage({
             <WishlistItemCard
               key={product.id}
               product={product}
-              isLCP={index === 0} // Prop untuk prioritas LCP tetap digunakan
+              isLCP={index === 0}
             />
           ))}
         </div>
       );
     }
 
-    // Tampilan jika wishlist kosong
+    // If wishlist is empty
     return (
       <div className="text-center py-24 px-4">
         <FiHeart size={60} className="mx-auto text-gray-300" />
@@ -83,7 +83,3 @@ export default function WishlistClientPage({
     </div>
   );
 }
-
-// Jangan lupa tambahkan `setItems` ke dalam store Zustand Anda
-// Di WishlistStore.ts:
-// setItems: (items) => set({ items: items }),

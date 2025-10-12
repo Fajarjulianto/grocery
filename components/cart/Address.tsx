@@ -1,29 +1,28 @@
 "use client";
 import React, { JSX, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
+
+// Types
+import type { Address } from "@/types/Address";
+
+// Context
+import { useAddressStore } from "@/store/addressStore";
+import { useRouter } from "next/navigation";
+
+// Components
 import {
   FiHome,
   FiChevronUp,
   FiBriefcase,
   FiChevronDown,
   FiMapPin,
-  FiAlertCircle, // Icon for the error message
 } from "react-icons/fi";
-import Link from "next/link";
-
-// Components
 const AddressDropdown = dynamic(
   () => import("@/components/cart/AddressDropdown")
 );
 
-// --- Import the Zustand store ---
-import { useAddressStore } from "@/store/addressStore"; // Adjust path if necessary
-
-// Types
-import type { Address } from "@/types/Address";
-import { useRouter } from "next/navigation";
-
-const labelIcons: { [key: string]: JSX.Element } = {
+const labelIcons: Record<string, JSX.Element> = {
   Home: (
     <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
       <FiHome className="text-blue-600" />
@@ -39,46 +38,78 @@ const defaultIcon = <FiMapPin className="text-gray-500" size={20} />;
 
 export default function Address(): JSX.Element | null {
   const router = useRouter();
-  // Destructure state, including `error`, from the store ---
   const { addressList, selectedAddressIndex, isLoading, fetchAddresses } =
     useAddressStore();
+  const [isOpen, setIsOpen] = useState(false);
 
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-
-  // The useEffect is simplified (no router needed) ---
+  // Only fetch the data if it does not exist
   useEffect(() => {
-    // Just call the action from the store.
-    fetchAddresses(router, false);
-  }, [fetchAddresses]);
+    if (addressList.length === 0) {
+      fetchAddresses(router, false);
+    }
+  }, [addressList.length, fetchAddresses, router]);
 
-  const toggleDropdown = () => setIsOpen(!isOpen);
-
-  // Use `isLoading` from the store ---
   if (isLoading) {
     return (
       <footer className="bg-white z-10 max-w-screen-lg mx-auto px-4 py-4">
-        <p className="text-center text-gray-500">Loading addresses...</p>
-      </footer>
-    );
-  }
-
-  // Display a message if there's an error from the store ---
-  if (addressList.length === 0) {
-    return (
-      <footer className="bg-white z-10 max-w-screen-lg mx-auto px-4 py-4">
-        <div className="flex items-center justify-center gap-2 text-red-500">
-          <FiAlertCircle />
-          <p className="text-sm">Failed to load addresses. Please try again.</p>
+        <div className="animate-pulse space-y-3">
+          <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+          <div className="h-3 bg-gray-200 rounded w-2/3"></div>
         </div>
       </footer>
     );
   }
 
-  // --- 6. Use `addressList` for the empty state ---
-  if (addressList.length === 0) {
-    return (
-      <footer className="bg-white z-10 max-w-screen-lg mx-auto px-4">
-        <hr className="bg-gray-200 opacity-10" />
+  const currentAddress: Address =
+    addressList[selectedAddressIndex] ?? addressList[0];
+
+  return (
+    <footer className="bg-white z-10 max-w-screen-lg mx-auto px-4">
+      <hr className="bg-gray-200 opacity-10" />
+
+      {currentAddress && (
+        <>
+          <div
+            className="py-4 cursor-pointer"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {labelIcons[currentAddress.label] || defaultIcon}
+                <div>
+                  <p className="font-semibold">
+                    Delivering to{" "}
+                    <span className="text-green-600">
+                      {currentAddress?.label || ""}
+                    </span>
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {currentAddress?.address.substring(0, 30) + "..." ||
+                      "No address registered"}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button className="font-bold text-green-600 text-sm">
+                  Change
+                </button>
+                {isOpen ? (
+                  <FiChevronUp className="text-gray-400" size={20} />
+                ) : (
+                  <FiChevronDown className="text-gray-400" size={20} />
+                )}
+              </div>
+            </div>
+          </div>
+          {isOpen && (
+            <div className="pb-4 border-t border-gray-100">
+              <AddressDropdown data={addressList} />
+            </div>
+          )}
+        </>
+      )}
+
+      {addressList.length === 0 && (
         <div className="py-4">
           <Link
             href={"/map"}
@@ -96,53 +127,6 @@ export default function Address(): JSX.Element | null {
               </p>
             </div>
           </Link>
-        </div>
-      </footer>
-    );
-  }
-
-  const currentAddress = addressList[selectedAddressIndex];
-
-  // If `currentAddress` doesn't exist (e.g., invalid index), don't render
-  if (!currentAddress) {
-    return null;
-  }
-
-  return (
-    <footer className="bg-white z-10 max-w-screen-lg mx-auto px-4">
-      {/* ... the rest of the JSX is unchanged ... */}
-      <hr className="bg-gray-200 opacity-10" />
-
-      {/* Dropdown Trigger */}
-      <div className="py-4 cursor-pointer" onClick={toggleDropdown}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {labelIcons[currentAddress.label] || defaultIcon}
-            <div>
-              <p className="font-semibold">
-                Delivering to{" "}
-                <span className="text-green-600">{currentAddress.label}</span>
-              </p>
-              <p className="text-xs text-gray-500">
-                {currentAddress.address.substring(0, 30)}...
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="font-bold text-green-600 text-sm">Change</button>
-            {isOpen ? (
-              <FiChevronUp className="text-gray-400" size={20} />
-            ) : (
-              <FiChevronDown className="text-gray-400" size={20} />
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Dropdown Content */}
-      {isOpen && (
-        <div className="pb-4 border-t border-gray-100">
-          <AddressDropdown data={addressList} />
         </div>
       )}
     </footer>

@@ -12,7 +12,7 @@ import Spinner from "../utils/Spinner";
 
 // Hooks, API, Context, and Stores
 import { useApiWithAuth } from "@/hooks/auth";
-import PaypalAPI from "@/lib/paypalAPI";
+import PaypalCheckout from "@/lib/paypalAPI";
 import { useCartContext } from "@/app/context/cartContext";
 import { useAddressStore } from "@/store/addressStore";
 import { useCheckoutContext } from "@/app/context/checkoutContext";
@@ -35,7 +35,7 @@ export default function CheckoutPage(): JSX.Element {
   const [isLoading, setIsLoading] = useState(false); // Manages the loading spinner during API calls.
   const [error, setError] = useState<string | null>(null); // Holds the error message for the alert modal. Null if no error.
 
-  // --- Data to be sent to the API ---
+  // --- Data to be sent to the API (address_id from table address from server DB) ---
   const [address, setAddress] = useState<string>(""); // Holds the selected address string for the API call.
 
   // --- Hooks and Context ---
@@ -62,7 +62,7 @@ export default function CheckoutPage(): JSX.Element {
     if (addressList.length > 0) {
       const currentIndex =
         selectedAddressIndex < addressList.length ? selectedAddressIndex : 0;
-      setAddress(addressList[currentIndex].address);
+      setAddress(addressList[currentIndex].id);
     }
   }, [addressList, selectedAddressIndex]);
 
@@ -82,13 +82,14 @@ export default function CheckoutPage(): JSX.Element {
       setError("Please select a shipping address first.");
       return;
     }
-
+    // alert(address);
+    // return;
     setIsLoading(true);
     setError(null);
 
     try {
       const response = await apiWithAuth(
-        PaypalAPI.createOrder,
+        PaypalCheckout.createOrder,
         coupon_code || "",
         address
       );
@@ -134,7 +135,6 @@ export default function CheckoutPage(): JSX.Element {
         />
       )}
 
-      {/* 4. Checkout bar Anda akan SELALU tampil di bawah */}
       <div className="fixed flex justify-between bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-2xl bg-white p-4">
         <div>
           <p className="text-xs text-gray-500 flex items-center">

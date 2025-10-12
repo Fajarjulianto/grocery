@@ -1,24 +1,36 @@
 // components/ProductGrid.tsx
 "use client";
 
-import { useState } from "react";
-import { Product } from "@/types/product";
-import { fetchProducts } from "@/app/all-products/actions";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { ProductCard } from "../ui/ProductCard";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 
+import {
+  fetchMoreProductsFromDB,
+  fetchProductByCategory,
+  searchproduct,
+} from "@/app/all-products/actions";
+import InfiniteScroll from "react-infinite-scroll-component";
+import SpecialCard from "@/components/all-products/SpecialCard";
+
+// Types
+import type { Product } from "@/types/product";
+import type { ProductCategory } from "@/types/product";
 interface ProductGridProps {
   initialProducts: Product[];
 }
 
-// Tipe untuk cursor kita di client
 type Cursor = {
-  createdAt: string;
-  id: string;
+  serial_id: number;
 } | null;
 
 export default function ProductGrid({ initialProducts }: ProductGridProps) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
+
+  const params = useSearchParams();
+  // Getting category value from url params
+  const category: string | null = params.get("category");
+
+  const searchQuery: string | null = params.get("keyword");
 
   // Inisialisasi cursor dari produk terakhir yang di-load oleh server
   const [cursor, setCursor] = useState<Cursor>(() => {
@@ -26,10 +38,42 @@ export default function ProductGrid({ initialProducts }: ProductGridProps) {
       return null;
     }
     const lastProduct = initialProducts[initialProducts.length - 1];
-    return { createdAt: lastProduct.created_at, id: lastProduct.id };
+    return { serial_id: lastProduct.serial_id };
   });
 
-  const [hasMore, setHasMore] = useState(initialProducts.length > 0);
+  useEffect(() => {
+    async function fetchCategoryOrProduct() {
+      // If category from query params exists, call this function and return the value
+      // console.log(category);
+      if (category) {
+        const categoryData: ProductCategory | null =
+          await fetchProductByCategory(category);
+        console.log(categoryData);
+
+        // Update the product grid data if the categoryData response was succeed
+        if (categoryData) {
+          setProducts(categoryData as Product[]);
+          return;
+        }
+
+        setProducts([]);
+        return;
+      }
+
+      // Update the product grid data if the search response was succeed
+      if (searchQuery) {
+        const searchResult: Product[] = await searchproduct(searchQuery);
+        setProducts(searchResult);
+        return;
+      }
+
+      return;
+    }
+
+    fetchCategoryOrProduct();
+  }, [category, searchQuery]);
+
+  const [hasMore, setHasMore] = useState<boolean>(initialProducts.length > 0);
 
   const fetchMoreProducts = async () => {
     if (!cursor) {
@@ -37,11 +81,16 @@ export default function ProductGrid({ initialProducts }: ProductGridProps) {
       return;
     }
 
-    // Calculate the page number based on the current number of products
-    const page = Math.ceil((products.length + 1) / 10); // Assuming limit of 10 products per page
-
+    if (category) {
+      console.log(category);
+      const categoryData = await fetchProductByCategory(category);
+      setProducts(categoryData as Product[]);
+      return;
+    }
     // Call the server action with the calculated page number
-    const newProducts = await fetchProducts();
+    const newProducts = await fetchMoreProductsFromDB(
+      products[products.length - 1].serial_id
+    );
 
     if (newProducts.length === 0) {
       setHasMore(false);
@@ -50,9 +99,9 @@ export default function ProductGrid({ initialProducts }: ProductGridProps) {
 
     setProducts((prevProducts) => [...prevProducts, ...newProducts]);
 
-    // Perbarui cursor dengan data dari produk terakhir yang baru
+    // update the cursor data
     const lastProduct = newProducts[newProducts.length - 1];
-    setCursor({ createdAt: lastProduct.created_at, id: lastProduct.id });
+    setCursor({ serial_id: lastProduct.serial_id });
   };
 
   return (
@@ -62,21 +111,22 @@ export default function ProductGrid({ initialProducts }: ProductGridProps) {
       hasMore={hasMore}
       loader={<h4 className="text-center my-4">Loading...</h4>}
       endMessage={
-        <p className="text-center my-4 text-gray-500">
+        <p className="text-center my-4 text-primary">
           <b>All caught!</b>
         </p>
       }
       className="grid grid-cols-2 md:grid-cols-3 gap-2"
     >
-      {products.map((product) => (
-        <ProductCard
-          key={product.id}
-          id={product.product_id}
+      {products.map((product, index) => (
+        <SpecialCard
+          key={index}
+          id={product.id}
           image={product.image}
           name={product.name}
           detail={product.detail}
           price={product.price}
           final_price={product.final_price}
+          discount_percentage={product.discount_percentage}
           stock={product.stock}
         />
       ))}

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 // Components
 import ProfilePicture from "@/components/profile/ProfilePicture";
@@ -7,15 +6,15 @@ import { BottomNavBar } from "@/components/ui/BottomNavbar";
 import {
   FiEdit,
   FiLock,
-  FiCreditCard,
+  // FiCreditCard,
   FiBox,
   FiShield,
-  FiLogOut,
   FiFileText,
   FiChevronRight,
 } from "react-icons/fi";
 import { IconType } from "react-icons";
 import ProfileNavigator from "@/components/profile/ProfileNavigator";
+import LogoutButton from "@/components/profile/Logout";
 
 interface MenuItem {
   name: string;
@@ -25,18 +24,12 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
   { icon: FiEdit, name: "Edit Profile", href: "/profile/edit" },
-  { icon: FiLock, name: "Change Password", href: "/profile/change-password" },
-  { icon: FiCreditCard, name: "Payment Method", href: "/profile/payment" },
-  { icon: FiBox, name: "My Orders", href: "/profile/orders" },
+  { icon: FiLock, name: "Change Password", href: "/forget-password" },
+  // { icon: FiCreditCard, name: "Payment Method", href: "/profile/payment" },
+  { icon: FiBox, name: "My Orders", href: "/order-list" },
   { icon: FiShield, name: "Privacy Policy", href: "/profile/privacy" },
   { icon: FiFileText, name: "Terms & Conditions", href: "/profile/terms" },
 ];
-
-const user = {
-  name: "Smith Mate",
-  email: "smithmate@example.com",
-  imageUrl: "/images/profile.png",
-};
 
 export default function ProfilePage() {
   // const handleLogout = () => {
@@ -67,15 +60,7 @@ export default function ProfilePage() {
               </Link>
             ))}
           </section>
-          {/* <div className="p-4 mt-6">
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-3 bg-green-100 text-green-600 font-bold py-4 rounded-lg hover:bg-green-200 transition-colors"
-            >
-              <FiLogOut size={20} />
-              <span>Logout</span>
-            </button>
-          </div> */}
+          <LogoutButton />
         </main>
         <BottomNavBar />
       </div>

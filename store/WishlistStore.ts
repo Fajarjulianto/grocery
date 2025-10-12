@@ -14,6 +14,7 @@ type ApiWithAuthFunc = ReturnType<typeof useApiWithAuth>;
 
 interface WishlistState {
   items: WishlistProductList;
+  lastFetched: number;
 
   fetchWishlist: (apiWithAuth: ApiWithAuthFunc) => Promise<void>;
   removeFromWishlist: (
@@ -21,23 +22,39 @@ interface WishlistState {
     productId: string
   ) => Promise<boolean>;
   isWishlisted: (productId: string) => boolean;
+  clearWishlist: () => void;
 }
+
+const CACHE_DURATION = 1000 * 60 * 5; // 5 minutes
 
 export const useWishlistStore = create<WishlistState>()(
   persist(
     (set, get) => ({
       items: [],
+      lastFetched: 0,
 
       fetchWishlist: async (apiWithAuth) => {
         console.log("Fetching wishlist from API...");
         try {
+          const now = new Date().getTime();
+          console.log(now - get().lastFetched);
+          console.log(CACHE_DURATION);
+
+          if (now - get().lastFetched < CACHE_DURATION) {
+            // Use the cached data if it's still valid
+            return;
+          }
           const data = (await apiWithAuth(
             productAPI.getWishList
           )) as WishlistProductList;
 
           if (data && Array.isArray(data)) {
             set({ items: data });
+            set({ lastFetched: now });
+            return;
           }
+          set({ lastFetched: now });
+          return;
         } catch (error) {
           console.error("Failed to fetch wishlist:", error);
           set({ items: [] });
@@ -66,6 +83,12 @@ export const useWishlistStore = create<WishlistState>()(
       isWishlisted: (productId: string) => {
         const { items } = get();
         return items.some((item) => item.product_id === productId);
+      },
+      clearWishlist: () => {
+        set({
+          items: [],
+          lastFetched: 0,
+        });
       },
     }),
     {

@@ -11,7 +11,10 @@ type Product = {
   final_price: number;
   discount_percentage: number;
   product_id: string;
+  serial_id: number;
   message?: string;
+  rating?: number;
+  review?: number;
   stock: number;
 };
 
@@ -27,6 +30,7 @@ type ProductCategory = {
   category: string;
   sold: number;
   product_id: string;
+  stock: number;
   discount_percentage: number;
   final_price: number;
   message?: string;

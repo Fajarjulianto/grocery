@@ -11,9 +11,10 @@ import { FaTrash } from "react-icons/fa";
 import { FiEdit2 } from "react-icons/fi";
 import { InputField } from "@/components/ui/InputField";
 import { ProfileFormSkeleton } from "./ProfileFormSkelaton";
+import Alert from "@/components/utils/Alert";
 
 // Define a type for the user data for better type safety.
-import type { Users, UserProfileData } from "@/types/user";
+import type { Users, UserProfileData, Address } from "@/types/user";
 
 // API
 import UserAPI from "@/lib/userAPI";
@@ -21,13 +22,21 @@ import UserAPI from "@/lib/userAPI";
 // Custom hooks
 import { useApiWithAuth } from "@/hooks/auth";
 
+// Context
+import { useAddressStore } from "@/store/addressStore";
+
 export function EditProfileForm(): JSX.Element {
   const router = useRouter();
   const apiWithAuth = useApiWithAuth();
 
-  // State untuk data dan status loading
+  // States
   const [formData, setFormData] = React.useState<UserProfileData | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [message, setMessage] = React.useState<string>("");
+  const [alert, setAlert] = React.useState<boolean>(false);
+
+  // Context store
+  const { clearCache } = useAddressStore();
 
   React.useEffect(() => {
     async function fetchUserData() {
@@ -104,90 +113,134 @@ export function EditProfileForm(): JSX.Element {
     );
   }
 
-  const [user, addresses] = formData; // Destructuring for cleaner access
+  // Function to handle remove address
+  async function handleRemoveAddress(address_id: string) {
+    try {
+      const response = (await apiWithAuth(
+        UserAPI.removeAddress,
+        address_id
+      )) as boolean;
+
+      if (!response) {
+        setMessage("Failed to remove your address");
+        setAlert(true);
+        return;
+      }
+
+      if (formData) {
+        const filteredData = formData[1].filter((address: Address) => {
+          return address.id !== address_id;
+        });
+
+        setFormData([formData[0], filteredData]);
+        clearCache();
+      }
+
+      return;
+    } catch (error) {
+      setMessage("Failed to remove your address");
+      setAlert(true);
+      return;
+    }
+  }
+
+  const [user] = formData; // Destructuring for cleaner access
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="flex justify-center mb-6">
-        <div className="relative">
-          <Image
-            src={user.profile_picture || "/images/profile.png"}
-            alt={user.username || "Profile Picture"}
-            width={100}
-            height={100}
-            className="rounded-full object-cover border-2 border-gray-200"
-            priority
-            onError={(e) => {
-              e.currentTarget.src =
-                "https://placehold.co/100x100/e2e8f0/94a3b8?text=SM";
-            }}
-          />
-          <button
-            type="button"
-            className="absolute bottom-1 right-1 bg-green-500 text-white rounded-full p-2 hover:bg-green-600 transition-colors"
-          >
-            <FiEdit2 size={16} />
-          </button>
-        </div>
-      </div>
-
-      <div className="space-y-5">
-        <InputField
-          id="username"
-          name="username"
-          label="Name"
-          type="text"
-          value={user.username}
-          onChange={handleChange}
-        />
-        <InputField
-          id="email"
-          name="email"
-          label="Email Address"
-          type="email"
-          value={user.email}
-          onChange={handleChange}
-        />
-        <InputField
-          id="mobile"
-          name="mobile"
-          label="Mobile Number"
-          type="tel"
-          value={String(user.mobile) || ""}
-          onChange={handleChange}
-        />
-        {formData[1].map((address, index) => (
-          <span
-            className="flex justify-between items-center w-full mb-2"
-            key={index}
-          >
-            <div className="w-9/10">
-              <InputField
-                id={`address-${index}`}
-                name="address"
-                label={`Address ${index + 1}`}
-                type="text"
-                value={address || ""}
-                disabled={true}
-                onChange={() => {}}
-              />
-            </div>
-
-            <button type="button" className="flex justify-center items-center">
-              <FaTrash className="text-red-500 ml-4 cursor-pointer hover:text-red-600" />
+    <>
+      <Alert
+        isOpen={alert}
+        message={message}
+        onConfirm={() => setAlert(false)}
+      />
+      <form onSubmit={handleSubmit}>
+        <div className="flex justify-center mb-6">
+          <div className="relative">
+            <Image
+              src={user.profile_picture || "/images/profile.png"}
+              alt={user.username || "Profile Picture"}
+              width={100}
+              height={100}
+              className="rounded-full object-cover border-2 border-gray-200"
+              priority
+              onError={(e) => {
+                e.currentTarget.src =
+                  "https://placehold.co/100x100/e2e8f0/94a3b8?text=SM";
+              }}
+            />
+            <button
+              type="button"
+              className="absolute bottom-1 right-1 bg-green-500 text-white rounded-full p-2 hover:bg-green-600 transition-colors"
+            >
+              <FiEdit2 size={16} />
             </button>
-          </span>
-        ))}
-
-        <div className="pt-6">
-          <button
-            type="submit"
-            className="w-full bg-green-500 text-white font-bold py-4 rounded-xl hover:bg-green-600 transition-colors text-lg"
-          >
-            Update
-          </button>
+          </div>
         </div>
-      </div>
-    </form>
+
+        <div className="space-y-5">
+          <InputField
+            id="username"
+            name="username"
+            label="Name"
+            type="text"
+            value={user.username}
+            onChange={handleChange}
+          />
+          <InputField
+            id="email"
+            name="email"
+            label="Email Address"
+            type="email"
+            value={user.email}
+            onChange={handleChange}
+          />
+          <InputField
+            id="mobile"
+            name="mobile"
+            label="Mobile Number"
+            type="tel"
+            value={String(user.mobile) || ""}
+            onChange={handleChange}
+          />
+          {formData[1].map((address, index) => (
+            <span
+              className="flex justify-between items-center w-full mb-2"
+              key={index}
+            >
+              <div className="w-9/10">
+                <InputField
+                  id={`address-${index}`}
+                  name="address"
+                  label={`Address ${index + 1}`}
+                  type="text"
+                  value={address.address || ""}
+                  disabled={true}
+                  onChange={() => {}}
+                />
+              </div>
+
+              <button
+                onClick={() => {
+                  handleRemoveAddress(address.id);
+                }}
+                type="button"
+                className="flex justify-center items-center"
+              >
+                <FaTrash className="text-red-500 ml-4 cursor-pointer hover:text-red-600" />
+              </button>
+            </span>
+          ))}
+
+          <div className="pt-6">
+            <button
+              type="submit"
+              className="w-full bg-green-500 text-white font-bold py-4 rounded-xl hover:bg-green-600 transition-colors text-lg"
+            >
+              Update
+            </button>
+          </div>
+        </div>
+      </form>
+    </>
   );
 }

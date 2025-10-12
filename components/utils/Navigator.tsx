@@ -8,6 +8,7 @@ import ProductApi from "@/lib/api";
 
 // Components
 import Alert from "./Alert";
+import { FiArrowLeft } from "react-icons/fi";
 
 // types
 import type { Wishlist } from "@/types/wishlist";
@@ -17,7 +18,7 @@ import type { Message } from "@/types/Message";
 type Props = {
   favorite: boolean;
   title: string;
-  product_id: string;
+  product_id?: string;
 };
 
 export default function Navigator({ favorite, title, product_id }: Props) {
@@ -38,7 +39,7 @@ export default function Navigator({ favorite, title, product_id }: Props) {
           token
         )) as Wishlist;
 
-        // Jika the response is failed or (token expired), try to call refresh token
+        // If the response is failed or (token expired), try to call refresh token
         if (!wishlistResponse) {
           const newToken: boolean | Token = await ProductApi.getRefreshToken();
 
@@ -88,11 +89,17 @@ export default function Navigator({ favorite, title, product_id }: Props) {
   async function addToWishlist(): Promise<void> {
     console.log("The button works");
     const token = localStorage.getItem("access_token") as string;
+
+    if (!product_id) {
+      setMessage("product_id was not found");
+      setAlert(true);
+      return;
+    }
     const response: false | Message = await ProductApi.addToWishlist(
       token,
       product_id
     );
-    // console.log(response);
+    console.log(response);
     if (!response) {
       const newToken: false | Token = await ProductApi.getRefreshToken();
 
@@ -108,7 +115,7 @@ export default function Navigator({ favorite, title, product_id }: Props) {
         newToken[0].access_token,
         product_id
       );
-      // console.log(newResponse);
+      console.log(newResponse);
       if (newResponse === false) {
         setDisableButton(false);
         setMessage("Failed to add the item to the wishlist");
@@ -140,20 +147,12 @@ export default function Navigator({ favorite, title, product_id }: Props) {
 
       {/* Back Arrow */}
       <button
-        onClick={() => router.back()}
+        onClick={() => router.push("/")}
         className="text-xl text-gray-700"
         aria-label="Back"
       >
-        {/* Left Arrow SVG */}
-        <svg
-          width="24"
-          height="24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path d="M15 6l-6 6 6 6" />
-        </svg>
+        {/* Left Arrow Icon */}
+        <FiArrowLeft />
       </button>
 
       {/* Title */}
@@ -180,7 +179,7 @@ export default function Navigator({ favorite, title, product_id }: Props) {
           />
         </button>
       ) : (
-        ""
+        <span></span>
       )}
     </nav>
   );

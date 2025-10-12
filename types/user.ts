@@ -10,10 +10,15 @@ interface Users {
   created_at: string; // or Date if you plan to parse it
 }
 
+interface Address {
+  id: string;
+  address: string;
+}
+
 /**
  * Represents the complete user data structure, including profile and addresses.
  * It's a tuple containing the user object and an array of address strings.
  */
-type UserProfileData = [Users, string[]];
+type UserProfileData = [Users, Address[]];
 
-export type { Users, UserProfileData };
+export type { Users, UserProfileData, Address };

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 // Context
 import { useMapContext } from "@/app/context/mapContext";
+import { useAddressStore } from "@/store/addressStore";
 
 // API
 import ProductAPI from "@/lib/api";
@@ -43,6 +44,9 @@ export default function AddAddressForm(): JSX.Element | null {
 
   // Fetching and setting the Address display name fron server
   const [addressName, setAddressName] = React.useState<string>("");
+
+  // Context store to update map to user's UI
+  const { fetchAddresses } = useAddressStore();
 
   React.useEffect(() => {
     async function getAddressFromDB(): Promise<void> {
@@ -118,6 +122,9 @@ export default function AddAddressForm(): JSX.Element | null {
       }
       // Back to cart page if it success
       router.push("/cart");
+
+      // Update the map on the client-side
+      fetchAddresses(router, true);
     }
 
     // console.log("Address confirmed with label:", finalLabel);
@@ -125,6 +132,8 @@ export default function AddAddressForm(): JSX.Element | null {
 
     // Back to cart page if it success
     router.push("/cart");
+    // Update the map on the client-side
+    fetchAddresses(router, true);
   };
 
   return (

@@ -11,10 +11,7 @@ interface CategoryCardProps {
 
 const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
   return (
-    <Link
-      href={category.href}
-      className="flex flex-col items-center gap-2 text-center group"
-    >
+    <div className="flex flex-col items-center gap-2 text-center group">
       <div className="w-20 h-20 bg-gray-100 rounded-xl flex items-center justify-center p-2 overflow-hidden group-hover:shadow-md transition-shadow">
         <div className="relative w-full h-full">
           <Image
@@ -34,7 +31,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
       <p className="text-xs font-medium text-gray-700 group-hover:text-green-600">
         {category.name}
       </p>
-    </Link>
+    </div>
   );
 };
 
@@ -49,8 +46,10 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
     <section>
       <SectionHeader title="Shop By Category" />
       <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-4">
-        {(categories || []).map((category) => (
-          <CategoryCard key={category.id} category={category} />
+        {(categories || []).map((category, index) => (
+          <Link key={index} href={`/all-products?category=${index + 1}`}>
+            <CategoryCard key={category.id} category={category} />
+          </Link>
         ))}
       </div>
     </section>

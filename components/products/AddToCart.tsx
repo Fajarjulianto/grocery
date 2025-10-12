@@ -8,7 +8,7 @@ import Alert from "../utils/Alert";
 // API
 import ProductAPi from "@/lib/api";
 // types
-import type { Token } from "@/types";
+import type { Token } from "@/types/product";
 
 type Props = {
   product_id: string;
