@@ -1,14 +1,12 @@
 "use client";
 
 // Components
-import ReorderButton from "./ReorderButton";
 import DateAndPrice from "./DateAndPrice";
 import OrdersCardContent from "./OrdersCardContent";
 import MessageButton from "./MessageButton";
 
 // Types
 import type { CompletedOrderItem, UpcomingOrderedItem } from "@/types/orders";
-import { Product } from "@/types/product";
 interface OrderCardProps {
   order: UpcomingOrderedItem;
 }

@@ -1,17 +1,15 @@
-
 "use client";
 
-import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { IoChevronBack, IoSearch, IoClose } from 'react-icons/io5';
-import { ProductGridCard } from '@/components/ui/ProductGridCard';
-import { Product } from '@/types';
-
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { IoChevronBack, IoSearch, IoClose } from "react-icons/io5";
+import { ProductGridCard } from "@/components/ui/ProductGridCard";
+import { Product } from "@/types/product";
 
 function SearchPageComponent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [query, setQuery] = useState(searchParams.get('q') || '');
+  const [query, setQuery] = useState(searchParams.get("q") || "");
   const [results, setResults] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -22,13 +20,12 @@ function SearchPageComponent() {
   };
 
   useEffect(() => {
-    const currentQuery = searchParams.get('q');
+    const currentQuery = searchParams.get("q");
     if (currentQuery) {
       setIsLoading(true);
-      setResults([]); 
+      setResults([]);
       setError(null);
 
-      
       const fetchProducts = async () => {
         try {
           const API_ENDPOINT = `http://localhost:3001/api/all-products/search?q=${currentQuery}`;
@@ -36,13 +33,12 @@ function SearchPageComponent() {
 
           const response = await fetch(API_ENDPOINT);
           if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
           }
           const data = await response.json();
           setResults(data);
-
         } catch (err) {
-          setError('Gagal memuat data. Silakan coba lagi.');
+          setError("Gagal memuat data. Silakan coba lagi.");
           console.error(err);
         } finally {
           setIsLoading(false);
@@ -55,21 +51,26 @@ function SearchPageComponent() {
 
   const renderResults = () => {
     if (isLoading) {
-      return <p className="text-center text-gray-500 mt-8">Mencari produk...</p>;
+      return (
+        <p className="text-center text-gray-500 mt-8">Mencari produk...</p>
+      );
     }
 
     if (error) {
       return <p className="text-center text-red-500 mt-8">{error}</p>;
     }
-    
-    if (searchParams.get('q') && results.length === 0) {
+
+    if (searchParams.get("q") && results.length === 0) {
       return (
         <div className="text-center mt-8 px-4">
-            <IoSearch size={60} className="mx-auto text-gray-300" />
-            <h2 className="mt-4 text-xl font-semibold text-gray-800">Produk Tidak Ditemukan</h2>
-            <p className="text-gray-500 mt-1">
-              Kami tidak dapat menemukan produk yang cocok dengan pencarian "{searchParams.get('q')}".
-            </p>
+          <IoSearch size={60} className="mx-auto text-gray-300" />
+          <h2 className="mt-4 text-xl font-semibold text-gray-800">
+            Produk Tidak Ditemukan
+          </h2>
+          <p className="text-gray-500 mt-1">
+            Kami tidak dapat menemukan produk yang cocok dengan pencarian "
+            {searchParams.get("q")}".
+          </p>
         </div>
       );
     }
@@ -101,9 +102,9 @@ function SearchPageComponent() {
                 className="w-full bg-gray-100 border border-transparent rounded-lg py-2 pl-10 pr-10 focus:outline-none focus:ring-2 focus:ring-green-500"
               />
               {query && (
-                <button 
-                  type="button" 
-                  onClick={() => setQuery('')} 
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                 >
                   <IoClose size={20} />
@@ -113,20 +114,16 @@ function SearchPageComponent() {
           </div>
         </header>
 
-
-        <main className="p-4">
-          {renderResults()}
-        </main>
+        <main className="p-4">{renderResults()}</main>
       </div>
     </div>
   );
 }
 
-
 export default function SearchPage() {
-    return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <SearchPageComponent />
-        </Suspense>
-    );
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SearchPageComponent />
+    </Suspense>
+  );
 }

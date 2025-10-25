@@ -1,0 +1,10 @@
+[33mcommit 27acd057f774c0322108f5db03f79ddcb42693e2[m
+Author: FAJAR <fajarjulileo@gmail.com>
+Date:   Tue Oct 7 08:48:34 2025 +0700
+
+    fix
+
+components/views/CategoryView.tsx
+components/views/HomeViews.tsx
+components/views/ProductDetailView.tsx
+lib/api.ts

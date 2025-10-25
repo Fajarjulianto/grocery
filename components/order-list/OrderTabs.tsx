@@ -1,66 +1,32 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect } from "react";
 
-// Context
-import { useOrderContext } from "@/app/context/orderContext";
+// Store Zustand yang baru
+import { useOrderStore } from "@/store/orderStore";
 
-// API
-import OrderAPI from "@/lib/orderAPI";
-
-// Custom hook
+// Custom hook untuk otentikasi API
 import { useApiWithAuth } from "@/hooks/auth";
 
-// Types
-import type { CompletedOrderItem, UpcomingOrderedItem } from "@/types/orders";
 export default function OrderTabs() {
-  // Context state
+  // Ambil state dan action dari store Zustand
   const {
+    activeTab,
+    updateActiveTab,
     updateCompletedOrder,
     updateUpcomingOrder,
-    updateActiveTab,
-    activeTab,
-  } = useOrderContext();
+  } = useOrderStore();
 
-  // Auth hook
   const apiWithAuth = useApiWithAuth();
 
-  const fetchDataFromDB = useCallback(async () => {
-    /**
-     * Fetches and updates the completed order list if the correct tab is active.
-     */
-    if (activeTab === 1) {
-      const response = (await apiWithAuth(OrderAPI.getCompletedOrder)) as
-        | CompletedOrderItem[]
-        | false;
-
-      console.log(response);
-
-      if (!response) {
-        updateCompletedOrder([]);
-        return;
-      }
-      updateCompletedOrder(response);
-    }
-
-    if (activeTab !== 1) {
-      const response = (await apiWithAuth(OrderAPI.getUpcomingOrder)) as
-        | UpcomingOrderedItem[]
-        | false;
-
-      console.log(response);
-
-      if (!response) {
-        updateUpcomingOrder([]);
-        return;
-      }
-      updateUpcomingOrder(response);
-    }
-  }, [activeTab, apiWithAuth, updateCompletedOrder]); // Dependencies of the callback
-
   useEffect(() => {
-    fetchDataFromDB();
-  }, [fetchDataFromDB]);
+    if (activeTab === 1) {
+      updateCompletedOrder(apiWithAuth);
+    } else {
+      // activeTab === 2
+      updateUpcomingOrder(apiWithAuth);
+    }
+  }, [activeTab, updateCompletedOrder, updateUpcomingOrder, apiWithAuth]);
 
   return (
     <div className="flex bg-gray-100 rounded-full p-1 mb-6">

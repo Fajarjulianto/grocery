@@ -39,6 +39,8 @@ export default function LogoutButton(): JSX.Element {
       UserAPI.logout
     )) as unknown as boolean;
 
+    localStorage.removeItem("access_token");
+
     if (!response) {
       setMessage("Server error, failed to signout");
       setAlert(true);

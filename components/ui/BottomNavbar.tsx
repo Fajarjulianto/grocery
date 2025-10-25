@@ -1,14 +1,13 @@
 import Link from "next/link";
 import { CiHeart } from "react-icons/ci";
 import { TbSmartHome } from "react-icons/tb";
-import { HiOutlineShoppingBag } from "react-icons/hi2";
 import { CiUser } from "react-icons/ci";
 import { FiMail } from "react-icons/fi";
 
 const navItems = [
   { href: "/", icon: TbSmartHome, label: "Home", active: true },
   { href: "/wishlist", icon: CiHeart, label: "Wishlist", active: true },
-  { href: "/cart", icon: FiMail, label: "Cart", active: false },
+  { href: "/chat", icon: FiMail, label: "Chat", active: false },
   { href: "/profile", icon: CiUser, label: "Profile", active: true },
 ];
 

@@ -24,11 +24,11 @@ export default function SimilarProducts({
   console.log(result, "result");
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 overflow-x-auto">
       {similarProduct.map((items, index) => {
         // console.log("Rendering item:", items);
 
-        // Validasi data sebelum render
+        // Validate the data before render
         if (!items || typeof items !== "object") {
           // console.warn("Invalid item data:", items);
           return null;
@@ -37,7 +37,7 @@ export default function SimilarProducts({
         return (
           <span key={index}>
             <ProductCard
-              id={items.product_id}
+              id={items.id}
               name={items.name || "Unknown"}
               image={items.image || ""}
               detail={items.detail || ""}

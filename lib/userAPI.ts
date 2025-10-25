@@ -2,7 +2,7 @@
 import type { Users } from "@/types/user";
 
 class UserAPI {
-  public static async getUserProfile(token: string): Promise<Users | null> {
+  public static async getUserProfile(token: string): Promise<Users[] | null> {
     const response = await fetch("http://localhost:3001/api/profile", {
       method: "GET",
       headers: {
@@ -17,7 +17,7 @@ class UserAPI {
 
     const data = await response.json();
     console.log(data);
-    return data as Users;
+    return data as Users[];
   }
 
   public static async editUserProfile(
@@ -92,6 +92,9 @@ class UserAPI {
           authorization: `Bearer ${token}`,
         },
       });
+
+      const data = await response.json();
+      console.log(data);
 
       if (response.status !== 200) {
         return false;

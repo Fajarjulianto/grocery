@@ -6,14 +6,20 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+// file: app/layout.tsx
+import Providers from "../provider/Provider";
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.className}>
-      <body>{children}</body>
+    <html lang="en">
+      <body>
+        {/* <Providers>{children}</Providers> */}
+        {children}
+      </body>
     </html>
   );
 }

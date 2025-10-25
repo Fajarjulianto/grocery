@@ -207,7 +207,7 @@ export const useCartStore = create<CartState>()(
             const newTokenData: false | Token =
               await ProductAPI.getRefreshToken();
 
-            console.log(typeof newTokenData, newTokenData);
+            // console.log(typeof newTokenData, newTokenData);
             if (!newTokenData || !Array.isArray(newTokenData)) {
               router.push("/login"); // Redirect if refresh fails
               set({ isLoading: false, cartItems: [], itemTotal: 0 });

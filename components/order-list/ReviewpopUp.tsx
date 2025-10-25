@@ -15,6 +15,7 @@ import Alert from "../utils/Alert";
 
 // Context
 import { useReviewContext } from "@/app/context/reviewContext";
+import { useOrderStore } from "@/store/orderStore";
 
 export default function ReviewPopup() {
   // Context state
@@ -27,6 +28,8 @@ export default function ReviewPopup() {
     updateComment,
     clearAll,
   } = useReviewContext();
+
+  const { updateCompletedOrder } = useOrderStore();
 
   // Local state
   const [alertTrigger, setAlertTrigger] = React.useState<boolean>(false);
@@ -59,6 +62,7 @@ export default function ReviewPopup() {
     setAlertTrigger(true);
     setMessage("Review success");
     updateActivatePopup(false);
+    updateCompletedOrder(apiWithAuth, true);
     clearAll();
     return;
   };

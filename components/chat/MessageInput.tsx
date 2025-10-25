@@ -1,57 +1,50 @@
-// components/MessageInput.tsx
-"use client";
+import React, { JSX } from "react";
 
 import { useState, FormEvent } from "react";
+import { IoPaperPlane } from "react-icons/io5";
 
 interface MessageInputProps {
-  onSendMessage: (text: string) => void;
+  onSendMessage: (message: string) => void;
 }
 
 /**
- * A simple, controlled Client Component for the message input form.
+ * A component for the message input field and send button.
+ * It handles user input and triggers the send message callback.
+ * @param {MessageInputProps} props - The props for the component.
+ * @returns {JSX.Element} The rendered message input form.
  */
-export default function MessageInput({ onSendMessage }: MessageInputProps) {
-  const [text, setText] = useState("");
+const MessageInput = ({ onSendMessage }: MessageInputProps): JSX.Element => {
+  const [message, setMessage] = useState("");
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (text.trim()) {
-      onSendMessage(text.trim());
-      setText("");
+    // Input validation: do not send empty messages
+    if (message.trim()) {
+      onSendMessage(message);
+      setMessage("");
     }
   };
 
   return (
-    <div className="p-4 bg-gray-50 border-t">
-      <form onSubmit={handleSubmit} className="flex items-center gap-4">
+    <div className="p-4 border-t bg-white sticky bottom-0">
+      <form onSubmit={handleSubmit} className="flex items-center space-x-3">
         <input
           type="text"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Ketik pesan..."
-          className="flex-1 p-3 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Your message..."
+          className="flex-1 p-3 border rounded-full focus:outline-none"
         />
         <button
           type="submit"
-          className="bg-blue-500 text-white p-3 rounded-full hover:bg-blue-600 disabled:bg-blue-300"
-          disabled={!text.trim()}
+          disabled={!message.trim()}
+          className="p-3 rounded-full text-white bg-green-600 disabled:bg-primary hover:bg-blue-600 transition-colors"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M5 12h14" />
-            <path d="m12 5 7 7-7 7" />
-          </svg>
+          <IoPaperPlane size={24} />
         </button>
       </form>
     </div>
   );
-}
+};
+
+export default MessageInput;

@@ -1,0 +1,68 @@
+[33m8cf90a1[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{0}: pull --rebase (finish): returning to refs/heads/master
+[33m8cf90a1[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{1}: pull --rebase (pick): feat: Add UpcomingOrderCard component for displaying upcoming orders
+[33m5551338[m HEAD@{2}: pull --rebase (pick): updating remote image patterns and simplifying dev script
+[33m27acd05[m HEAD@{3}: pull --rebase (start): checkout 27acd057f774c0322108f5db03f79ddcb42693e2
+[33m916200e[m HEAD@{4}: commit: feat: Add UpcomingOrderCard component for displaying upcoming orders
+[33m70b9286[m HEAD@{5}: commit: updating remote image patterns and simplifying dev script
+[33m5addde9[m HEAD@{6}: commit: upating data types
+[33mef4cc8f[m HEAD@{7}: commit: updating API fetching methodes
+[33m783f4b8[m HEAD@{8}: commit: updating auth custom hooks
+[33m3bc68bd[m HEAD@{9}: commit: updating category views {adding stock to product card}
+[33m6ad97e4[m HEAD@{10}: commit: updating bottom navbar
+[33m136d461[m HEAD@{11}: commit: Updating profile form and section header on profile page
+[33mf6ed842[m HEAD@{12}: commit: feat: add stock property to ProductCard in PopularProducts and BestDeals components
+[33m013d486[m HEAD@{13}: commit: feat(wishlist): implement wishlist functionality with dynamic fetching, optimistic updates, and loading states; add WishlistClientPage and WishlistItemCard components
+[33m607545f[m HEAD@{14}: commit: feat(cart): add SkelatonUI for loading state and enhance addToCart functionality with optimistic updates
+[33m4de33ef[m HEAD@{15}: commit: feat: implement product fetching and display with infinite scroll; add ProductGrid and CategorySidebar components for enhanced product management
+[33m4a84b0a[m HEAD@{16}: commit: feat: add react-infinite-scroll-component for improved scrolling experience; update dev script to bind to all network interfaces
+[33ma820d62[m HEAD@{17}: commit: feat(profile): implement user profile editing functionality with form validation and loading states; add editUserProfile API method for updating user data
+[33m1e63a35[m HEAD@{18}: commit: refactor(InputField): improve prop structure and formatting for better readability
+[33me548b11[m HEAD@{19}: commit: feat: add AddressDisplay and AddressDropdown components for user address management; implement LocationHeader for conditional rendering based on auth state; update ProductAPI and types for better data handling
+[33m97eed48[m HEAD@{20}: commit: refactor(profile): streamline EditProfilePage by fetching user data asynchronously and removing unnecessary state management
+[33m49c767e[m HEAD@{21}: commit: feat(profile): add profile editing functionality with skeleton loading state
+[33mc0eb77a[m HEAD@{22}: commit: fix: update ProductProps and Token type imports for consistency
+[33m858bb88[m HEAD@{23}: commit (merge): fix: resolve merge conflicts
+[33mcf62e5e[m HEAD@{24}: commit: feat(checkout): implement complete checkout and payment flow
+[33mab59ebb[m HEAD@{25}: pull --rebase origin master (finish): returning to refs/heads/master
+[33mab59ebb[m HEAD@{26}: pull --rebase origin master (pick): Refactoring home page
+[33m0e358c7[m HEAD@{27}: pull --rebase origin master (pick): Adding navigator component at the top of cart page
+[33m2ce10ac[m HEAD@{28}: pull --rebase origin master (pick): Adding cartItem component
+[33m45ae8a0[m HEAD@{29}: pull --rebase origin master (pick): Adding product details component and best deals componets
+[33m36e3925[m HEAD@{30}: pull --rebase origin master (pick): Adding add to cart feature to the cart page
+[33m9413c40[m HEAD@{31}: pull --rebase origin master (pick): updating popular product component
+[33m37b46e8[m HEAD@{32}: pull --rebase origin master (pick): Updating cart page and adding address selection
+[33mc418fcc[m HEAD@{33}: pull --rebase origin master (pick): updating root layout
+[33m32a2cbe[m HEAD@{34}: pull --rebase origin master (pick): updating globals.css for custom animation
+[33m99951d2[m HEAD@{35}: pull --rebase origin master (pick): Updating dependencies
+[33mb1e91bc[m HEAD@{36}: pull --rebase origin master (start): checkout b1e91bc037d1e8b08ca5de747f34aca2e93c571f
+[33m4b3a650[m HEAD@{37}: commit: Refactoring home page
+[33mb34ff5a[m HEAD@{38}: commit: Adding navigator component at the top of cart page
+[33m2ac8498[m HEAD@{39}: commit: Adding cartItem component
+[33md2e1fba[m HEAD@{40}: commit: Adding product details component and best deals componets
+[33m5129783[m HEAD@{41}: commit: Adding add to cart feature to the cart page
+[33m371d06b[m HEAD@{42}: commit: updating popular product component
+[33m29d113a[m HEAD@{43}: commit: Updating cart page and adding address selection
+[33m224f3e8[m HEAD@{44}: commit: updating root layout
+[33m70bf069[m HEAD@{45}: commit: updating globals.css for custom animation
+[33mf55e53e[m HEAD@{46}: commit: Updating dependencies
+[33mdf6281c[m HEAD@{47}: commit: Refactor ProductAPI to replace ErrorMessage with Message type; add getCoupons and removeCartItem methods; introduce CartContext and Coupon types
+[33m3990c67[m HEAD@{48}: commit: Add hidden prop to SectionHeader and update BestDeals to utilize it for conditional rendering
+[33m2793a6e[m HEAD@{49}: commit: Refactor OrderSummary component to remove props and simplify structure; maintain functionality with existing child components
+[33mf5aaf08[m HEAD@{50}: commit: Add OrderDetails component to display item total, discount, and delivery fee
+[33me0dcbba[m HEAD@{51}: commit: Add GrandTotal component to display final total after discounts
+[33me99b841[m HEAD@{52}: commit: Add CouponSelection component for managing coupon application and discounts
+[33m9ed7d45[m HEAD@{53}: commit: Refactor Address component layout; add padding and horizontal rule for improved structure
+[33me0b92d0[m HEAD@{54}: commit: Implement cart context for item total management; update CartLayout and CartPage components for improved functionality
+[33ma99562a[m HEAD@{55}: commit: Add Address, CheckoutButton, and OrderSummary components; enhance CartItem and API methods with new functionality
+[33me7a1311[m HEAD@{56}: commit: Add CartLayout and Loading components for cart functionality
+[33m93c9246[m HEAD@{57}: commit: Update LocationHeader for UI tweak
+[33m376609a[m HEAD@{58}: commit: Refactor API methods to include token handling and add Wishlist type definition
+[33m77d9285[m HEAD@{59}: commit: Refactor ProductCard component to integrate Alert for notifications and clean up unused imports
+[33m9c2722a[m HEAD@{60}: commit: Refactor AddToCart component to use Alert for notifications and update handleSubmit to handleClick for better clarity
+[33m797c379[m HEAD@{61}: commit: Refactor LoginForm component to remove unused imports and clean up code structure
+[33m2409001[m HEAD@{62}: commit: Add PopularProducts component and refactor BestDeals component for API integration
+[33m9d4a655[m HEAD@{63}: commit: Refactor product details and rating components for improved readability and consistency
+[33ma8fa1ea[m HEAD@{64}: commit (merge): Resolve merge conflicts
+[33mee0c0f5[m HEAD@{65}: commit: refactoring signup page and login page
+[33mcf6f772[m HEAD@{66}: commit: refactoring signup and login page
+[33m3d9c786[m HEAD@{67}: clone: from https://github.com/Fajarjulianto/grocery.git

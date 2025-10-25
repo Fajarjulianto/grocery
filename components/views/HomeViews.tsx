@@ -24,13 +24,6 @@ interface SearchFilter {
 // API
 import ProductAPI from "@/lib/api";
 
-// const sortOptions = [
-//   "Relevance",
-//   "Popularity",
-//   "Price: Low to High",
-//   "Price: High to Low",
-// ];
-
 export default async function HomeView({
   staticCategories,
 }: HomeViewProps): Promise<JSX.Element> {
@@ -38,7 +31,7 @@ export default async function HomeView({
   const popularProduct: false | Product[] =
     await ProductAPI.getPopularProducts();
 
-  const bestDeals: boolean | Product[] = await ProductAPI.getBestDeals();
+  const bestDeals: false | Product[] = await ProductAPI.getBestDeals();
   return (
     <div className="w-full px-4 sm:px-6 md:px-8 max-w-sm md:max-w-2xl mx-auto">
       <header className="py-4 flex justify-between items-center">
@@ -55,14 +48,6 @@ export default async function HomeView({
         <BestDeals bestDealsProduct={bestDeals} />
         <PopularProducts popularProduct={popularProduct} />
       </div>
-
-      {/* <SortModal
-        isOpen={isSortModalOpen}
-        onClose={() => setSortModalOpen(false)}
-        options={sortOptions}
-        selectedOption={sortOption}
-        onSelectOption={setSortOption}
-      /> */}
     </div>
   );
 }

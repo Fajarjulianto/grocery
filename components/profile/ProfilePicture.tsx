@@ -16,7 +16,7 @@ import UserAPI from "@/lib/userAPI";
 import { useApiWithAuth } from "@/hooks/auth";
 
 export default function ProfilePicture(): JSX.Element {
-  const [userData, setUserData] = React.useState<Users | null>(null);
+  const [userData, setUserData] = React.useState<Users[] | null>(null);
   const ApiWithAuth = useApiWithAuth();
 
   React.useEffect(() => {
@@ -25,12 +25,12 @@ export default function ProfilePicture(): JSX.Element {
 
     async function fetchUserData() {
       try {
-        const response = (await ApiWithAuth(
-          UserAPI.getUserProfile
-        )) as Users | null;
+        const response = (await ApiWithAuth(UserAPI.getUserProfile)) as
+          | Users[]
+          | null;
         // console.log(response);
         if (response !== null) {
-          setUserData(response as Users);
+          setUserData(response);
         }
       } catch (error) {
         console.error("Failed to fetch user data:", error);

@@ -26,12 +26,13 @@ const getReviews = async (productId: string): Promise<false | Review[]> => {
 };
 
 const getSimilarProducts = async (
-  category: string
+  category: string,
+  productID: string
 ): Promise<ProductCategory | false> => {
   const res = await fetch(
-    `http://localhost:3001/api/product-by-category?category=${encodeURIComponent(
+    `http://localhost:3001/api/similar-product?category=${encodeURIComponent(
       category
-    )}`,
+    )}&productID=${productID}`,
     {
       cache: "no-store",
     }
@@ -42,7 +43,7 @@ const getSimilarProducts = async (
   }
 
   const data = await res.json();
-  return data[0] as ProductCategory;
+  return data as ProductCategory;
 };
 export default async function ProductPage({
   params,
@@ -57,7 +58,8 @@ export default async function ProductPage({
   if (!Array.isArray(product)) {
     return <ErrorMessage message={product as string} />;
   }
-  const similarProduct = await getSimilarProducts(product[0].category);
+  const similarProduct = await getSimilarProducts(product[0].category, id);
+  console.log(similarProduct);
 
   const initialReviews = await getReviews(product[0].id);
   return (

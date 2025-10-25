@@ -7,9 +7,7 @@ import { useRouter } from "next/navigation";
 
 // Components
 import Alert from "../utils/Alert";
-import SuccessAnimation from "../utils/SuccessAnimation";
-import Spinner from "../utils/Spinner";
-
+import PaymentLoading from "./PaymentAnimation";
 // Hooks, API, Context, and Stores
 import { useApiWithAuth } from "@/hooks/auth";
 import PaypalCheckout from "@/lib/paypalAPI";
@@ -34,6 +32,7 @@ export default function CheckoutPage(): JSX.Element {
   // --- Component State ---
   const [isLoading, setIsLoading] = useState(false); // Manages the loading spinner during API calls.
   const [error, setError] = useState<string | null>(null); // Holds the error message for the alert modal. Null if no error.
+  const [finalPrice, setFinalPrice] = useState<number>(0);
 
   // --- Data to be sent to the API (address_id from table address from server DB) ---
   const [address, setAddress] = useState<string>(""); // Holds the selected address string for the API call.
@@ -41,7 +40,7 @@ export default function CheckoutPage(): JSX.Element {
   // --- Hooks and Context ---
   const apiWithAuth = useApiWithAuth();
   const { updateCheckoutData } = useCheckoutContext();
-  const { itemTotal, coupon_code } = useCartContext(); // Assumes couponCode is provided by the cart context.
+  const { itemTotal, coupon_code, discount } = useCartContext(); // Assumes couponCode is provided by the cart context.
   const { addressList, selectedAddressIndex, fetchAddresses } =
     useAddressStore();
 
@@ -65,6 +64,17 @@ export default function CheckoutPage(): JSX.Element {
       setAddress(addressList[currentIndex].id);
     }
   }, [addressList, selectedAddressIndex]);
+
+  useEffect(() => {
+    if (discount) {
+      const grandTotal: number = itemTotal - discount;
+      setFinalPrice(grandTotal);
+      return;
+    }
+
+    setFinalPrice(itemTotal);
+    return;
+  }, [itemTotal, discount]);
 
   /**
    * Handles the entire checkout process when the 'Place Order' button is clicked.
@@ -124,7 +134,8 @@ export default function CheckoutPage(): JSX.Element {
   return (
     <>
       {/* Loading animation */}
-      {isLoading && <Spinner text={"Processing your order..."} />}
+
+      <PaymentLoading visible={isLoading} />
 
       {/* Error message */}
       {error && (
@@ -156,7 +167,7 @@ export default function CheckoutPage(): JSX.Element {
           disabled={isLoading}
           className="bg-green-500 text-white font-bold py-3 px-6 rounded-lg flex items-center gap-2 disabled:bg-gray-400"
         >
-          <span>${itemTotal.toFixed(2)}</span>
+          <span>${finalPrice.toFixed(2)}</span>
           <span className="border-l border-green-400 pl-2">Place Order</span>
           <FiArrowRight />
         </button>

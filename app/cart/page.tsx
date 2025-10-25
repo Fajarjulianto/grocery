@@ -3,12 +3,11 @@ import React, { useEffect, JSX } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/CartStore";
 
+// API
+import ProductAPI from "@/lib/api";
+
 // Types
 import type { Product } from "@/types/product";
-
-interface ProductProps {
-  bestDealsData: Product[] | false;
-}
 
 // Components
 import CartItems from "@/components/ui/CartItem";
@@ -18,8 +17,10 @@ import SkelatonUI from "@/components/cart/SkelatonUI";
 // Context
 import { useCartContext } from "../context/cartContext";
 
-export default function CartPage({ bestDealsData }: ProductProps): JSX.Element {
+export default function CartPage(): JSX.Element {
   const router = useRouter();
+
+  const [bestDeals, setBestDeals] = React.useState<Product[] | false>();
 
   // Get state and actions from the Zustand store
   // Store
@@ -30,7 +31,13 @@ export default function CartPage({ bestDealsData }: ProductProps): JSX.Element {
 
   // Use useEffect to call fetchCart when the component mounts
   useEffect(() => {
+    async function fetchBestBeals() {
+      const bestDealsData: false | Product[] = await ProductAPI.getBestDeals();
+      setBestDeals(bestDealsData);
+    }
+
     fetchCart(router, false);
+    fetchBestBeals();
   }, [fetchCart, router]); // Dependency array
 
   useEffect(() => {
@@ -45,6 +52,23 @@ export default function CartPage({ bestDealsData }: ProductProps): JSX.Element {
   // 1. Display Loading UI
   if (isLoading) {
     return <SkelatonUI />;
+  }
+
+  if (!bestDeals) {
+    return (
+      <div className="w-full bg-white flex flex-col items-center justify-center font-inter min-h-screen p-4">
+        <h1 className="text-2xl font-bold mb-2">Your Cart is Empty</h1>
+        <p className="text-gray-600 mb-6">
+          Looks like you haven't added anything to your cart yet.
+        </p>
+        <button
+          onClick={() => router.push("/")}
+          className="bg-green-500 text-white font-bold py-3 px-6 rounded-lg"
+        >
+          Start Shopping
+        </button>
+      </div>
+    );
   }
 
   // 3. Display cart items
@@ -76,29 +100,10 @@ export default function CartPage({ bestDealsData }: ProductProps): JSX.Element {
             <h2 className="text-xl font-bold text-gray-800 mb-4">
               Before you Checkout
             </h2>
-            <BestDeals bestDealsProduct={bestDealsData} hidden={true} />
+            <BestDeals bestDealsProduct={bestDeals} hidden={true} />
           </div>
         </main>
       </div>
     </div>
-    // <>
-    //   {cartItems.length > 0 ? (
-
-    //   ) : (
-    //     // 2. Display if cart is empty
-    //     <div className="w-full bg-white flex flex-col items-center justify-center font-inter min-h-screen p-4">
-    //       <h1 className="text-2xl font-bold mb-2">Your Cart is Empty</h1>
-    //       <p className="text-gray-600 mb-6">
-    //         Looks like you haven't added anything to your cart yet.
-    //       </p>
-    //       <button
-    //         onClick={() => router.push("/")}
-    //         className="bg-green-500 text-white font-bold py-3 px-6 rounded-lg"
-    //       >
-    //         Start Shopping
-    //       </button>
-    //     </div>
-    //   )}
-    // </>
   );
 }

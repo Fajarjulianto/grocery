@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-
+import { useApiWithAuth } from "@/hooks/auth";
 // Components
 import { FaStar, FaRegStar } from "react-icons/fa";
 
 // Context
 import { useReviewContext } from "@/app/context/reviewContext";
+import { useOrderStore } from "@/store/orderStore";
 
 // Types
 import type { CompletedOrderItem } from "@/types/orders";
@@ -21,8 +22,11 @@ export default function StarRating({ orderData }: ProductDataProps) {
   const [hover, setHover] = useState<number>(0);
 
   // Context state
+  const { updateCompletedOrder } = useOrderStore();
   const { updateRating, updateActivatePopup, updateSelectedProduct } =
     useReviewContext();
+
+  const apiWithAuth = useApiWithAuth();
 
   function submitRating(rating: number): void {
     if (rating < 1 || rating > 5) return;
@@ -30,6 +34,7 @@ export default function StarRating({ orderData }: ProductDataProps) {
     setUserRating(rating);
     updateActivatePopup(true);
     updateSelectedProduct(orderData);
+    updateCompletedOrder(apiWithAuth, true);
     // alert(rating);
   }
 

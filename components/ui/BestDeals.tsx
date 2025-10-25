@@ -36,22 +36,6 @@ export function BestDeals({
   bestDealsProduct,
   hidden,
 }: ChildrenProps): JSX.Element {
-  // const { bestDealsProduct, isSuccess, isLoading, fetchBestDeals } =
-  //   useBestDealsStore();
-
-  // useEffect(() => {
-  //   fetchBestDeals();
-  // }, [fetchBestDeals]);
-
-  // if (isLoading) {
-  //   return (
-  //     <section>
-  //       <SectionHeader title="Best Deal" hidden={hidden} />
-  //       <div className="text-primary">Loading best deals...</div>
-  //     </section>
-  //   );
-  // }
-
   return (
     <section>
       <SectionHeader title="Best Deal" hidden={hidden} />

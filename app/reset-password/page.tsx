@@ -1,96 +1,26 @@
-"use client";
-import React, { JSX } from "react";
-import { useSearchParams } from "next/navigation";
+import React, { Suspense } from "react";
+import ResetPasswordForm from "@/components/reset-password/ResetPasswordForm";
+import ResetPasswordSkeleton from "@/components/reset-password/SkelatonLoading";
 
-// Components
-import Navigator from "@/components/utils/Navigator";
+/**
+ * A simple loading component to display while the client component is being prepared.
+ *
+ * @returns {JSX.Element} A loading paragraph.
+ */
 
-// API
-import UserAPI from "@/lib/userAPI";
-
-export default function Page(): JSX.Element {
-  const params = useSearchParams();
-
-  const token: string | null = params.get("token");
-  const [newPassword, setNewPassword] = React.useState<string>("");
-  const [verifyPassword, setVerifyPassword] = React.useState<string>("");
-
-  const [message, setMessage] = React.useState<string>("");
-  const [alert, setAlert] = React.useState<boolean>(false);
-  const [success, setSuccess] = React.useState<boolean>(false);
-
-  async function handleSubmit(event: React.FormEvent): Promise<void> {
-    event.preventDefault();
-
-    if (!token) {
-      setMessage("Session expired");
-      setAlert(true);
-      return;
-    }
-
-    if (newPassword !== verifyPassword) {
-      setMessage("Password does not match");
-      setAlert(true);
-      return;
-    }
-
-    const response: string | false = await UserAPI.changePassword(
-      token,
-      newPassword
-    );
-    console.log(response);
-
-    if (!response) {
-      setMessage("Server error, please try again later");
-      setAlert(true);
-      return;
-    }
-
-    setMessage(response);
-    setSuccess(true);
-    return;
-  }
+/**
+ * The main page for the /reset-password route.
+ * This is a Server Component that uses Suspense to defer the rendering
+ * of the client-side ResetPasswordForm.
+ *
+ * @returns {JSX.Element} The page structure with the suspended form.
+ */
+export default function ResetPasswordPage() {
   return (
-    <div className="w-full bg-secondary flex justify-center h-screen">
-      <div className="bg-white w-screen md:max-w-2xl">
-        <div className="w-full">
-          <Navigator favorite={false} title="Change Password" />
-        </div>
-        <div className="h-full flex">
-          <form
-            onSubmit={(event) => {
-              handleSubmit(event);
-            }}
-            className="w-full flex flex-col justify-center items-center gap-3"
-          >
-            <p className="text-primary">Reset Password</p>
-            <input
-              onChange={(event) => {
-                setNewPassword(event.target.value as string);
-              }}
-              type="password"
-              className="border-2 border-solid border-primary w-60 md:w-[40%] h-10 rounded-md text-center outline-0"
-              placeholder="New password"
-            ></input>
-            <input
-              onChange={(event) => {
-                setVerifyPassword(event.target.value as string);
-              }}
-              type="password"
-              className="border-2 border-solid border-primary w-60 md:w-[40%] h-10 rounded-md text-center outline-0"
-              placeholder="Verify your new password"
-            ></input>
-            {alert && <span className="text-red-600">{message}</span>}
-            {success && <span className="text-primary">{message}</span>}
-            <button
-              type="submit"
-              className="text-white bg-primary hover:bg-green-600 px-4 py-2 rounded-md"
-            >
-              Send Request
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
+    // Suspense will render the `fallback` UI on the server first.
+    // It will then swap to rendering ResetPasswordForm on the client.
+    <Suspense fallback={<ResetPasswordSkeleton />}>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }
