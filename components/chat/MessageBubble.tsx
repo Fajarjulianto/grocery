@@ -1,9 +1,9 @@
 import React, { JSX } from "react";
 
-import { MessageChat } from "@/types/Message";
+import { Chat } from "@/types/Message";
 
 interface MessageBubbleProps {
-  message: MessageChat;
+  message: Chat;
 }
 
 /**

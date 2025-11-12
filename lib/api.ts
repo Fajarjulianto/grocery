@@ -1,5 +1,5 @@
 import { type Product } from "@/types/product";
-import type { Message } from "@/types/Message";
+import type { ApiResponseMessage } from "@/types/product";
 import type { Token } from "@/types/product";
 import type { Cart } from "@/types/cart";
 import type { Coupon } from "@/types/coupon";
@@ -30,22 +30,22 @@ class ProductAPI {
    * ```typescript
    * const product = await ProductAPI.getProductById("123");
    * if (typeof product === "string") {
-   *   console.error("Error:", product);
+   * console.error("Error:", product);
    * } else {
-   *   console.log("Product:", product.name);
+   * console.log("Product:", product.name);
    * }
    * ```
    */
-  async getProductById(id: string): Promise<Product | String> {
+  async getProductById(id: string): Promise<Product | string> {
     const response = await fetch(
       `http://localhost:3001/api/product-by-id?productID=${id}`
     );
 
-    const result: Product | Message = await response.json();
+    const result: Product | ApiResponseMessage[] = await response.json();
 
     if (response.status !== 200) {
-      console.warn("API error:", (result as Message)[0].message);
-      return (result as Message)[0].message;
+      console.warn("API error:", (result as ApiResponseMessage[])[0].message);
+      return (result as ApiResponseMessage[])[0].message;
     }
 
     return result as Product;
@@ -61,7 +61,7 @@ class ProductAPI {
    * ```typescript
    * const wishlist = await ProductAPI.getWishList(userToken);
    * if (wishlist && Array.isArray(wishlist)) {
-   *   console.log(`Found ${wishlist.length} items in wishlist`);
+   * console.log(`Found ${wishlist.length} items in wishlist`);
    * }
    * ```
    */
@@ -87,7 +87,7 @@ class ProductAPI {
   public async addToWishlist(
     token: string,
     product_id: string
-  ): Promise<false | Message> {
+  ): Promise<false | ApiResponseMessage[]> {
     const response = await fetch("http://localhost:3001/api/add-to-wishlist", {
       method: "POST",
       headers: {
@@ -103,7 +103,7 @@ class ProductAPI {
 
     const data = await response.json();
 
-    return data as Message;
+    return data as ApiResponseMessage[];
   }
 
   /**
@@ -116,7 +116,7 @@ class ProductAPI {
    * ```typescript
    * const token = await ProductAPI.getRefreshToken();
    * if (token) {
-   *   console.log("Token refreshed successfully");
+   * console.log("Token refreshed successfully");
    * }
    * ```
    */
@@ -151,7 +151,7 @@ class ProductAPI {
    * ```typescript
    * const deals = await ProductAPI.getBestDeals();
    * if (deals) {
-   *   console.log("Best deals loaded");
+   * console.log("Best deals loaded");
    * }
    * ```
    */
@@ -184,7 +184,7 @@ class ProductAPI {
    * ```typescript
    * const popular = await ProductAPI.getPopularProducts();
    * if (popular) {
-   *   console.log("Popular products loaded");
+   * console.log("Popular products loaded");
    * }
    * ```
    */
@@ -214,9 +214,9 @@ class ProductAPI {
    * ```typescript
    * const result = await ProductAPI.addToCart("product123", userToken);
    * if (result) {
-   *   console.log("Success:", result);
+   * console.log("Success:", result);
    * } else {
-   *   console.error("Failed to add item to cart");
+   * console.error("Failed to add item to cart");
    * }
    * ```
    */
@@ -279,7 +279,7 @@ class ProductAPI {
   public async removeCartItem(
     token: string,
     product_id: string
-  ): Promise<false | Message> {
+  ): Promise<false | ApiResponseMessage> {
     const response = await fetch("http://localhost:3001/api/delete-cart-item", {
       method: "DELETE",
       headers: {
@@ -298,7 +298,7 @@ class ProductAPI {
       return false;
     }
 
-    return message as Message;
+    return message as ApiResponseMessage;
   }
 
   /**
@@ -448,7 +448,7 @@ class ProductAPI {
   public async increaseCartQuantity(
     token: string,
     product_id: string
-  ): Promise<Message | false> {
+  ): Promise<ApiResponseMessage | false> {
     const response = await fetch(
       "http://localhost:3001/api/increase-cart-quantity",
       {
@@ -468,7 +468,7 @@ class ProductAPI {
       return false;
     }
 
-    return data as Message;
+    return data as ApiResponseMessage;
   }
 
   /**
@@ -491,7 +491,7 @@ class ProductAPI {
   public async decreaseCartQuantity(
     token: string,
     product_id: string
-  ): Promise<Message | false> {
+  ): Promise<ApiResponseMessage | false> {
     const response = await fetch(
       "http://localhost:3001/api/decrease-cart-quantity",
       {
@@ -511,7 +511,7 @@ class ProductAPI {
       return false;
     }
 
-    return data as Message;
+    return data as ApiResponseMessage;
   }
 
   /**
@@ -579,7 +579,7 @@ class ProductAPI {
       );
 
       // if (response.status !== 200) {
-      //   return false;
+      //     return false;
       // }
       const data = await response.json();
       console.log(data);

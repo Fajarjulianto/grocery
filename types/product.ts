@@ -58,5 +58,6 @@ export type UpdateProductData = Partial<NewProductData>;
 export interface ApiResponseMessage {
   message: string;
 }
+[];
 
 export { type Product, type ErrorMessage, type ProductCategory };

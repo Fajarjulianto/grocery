@@ -13,7 +13,7 @@ import { FiArrowLeft } from "react-icons/fi";
 // types
 import type { Wishlist } from "@/types/wishlist";
 import type { Token } from "@/types/product";
-import type { Message } from "@/types/Message";
+import type { ApiResponseMessage } from "@/types/product";
 
 type Props = {
   favorite: boolean;
@@ -63,7 +63,7 @@ export default function Navigator({ favorite, title, product_id }: Props) {
         }
 
         // Set wishlist data
-        setWishlistData(wishlistResponse);
+        // setWishlistData(wishlistResponse);
 
         // Check if the response is an Array
         if (Array.isArray(wishlistResponse) && wishlistResponse.length > 0) {
@@ -95,10 +95,8 @@ export default function Navigator({ favorite, title, product_id }: Props) {
       setAlert(true);
       return;
     }
-    const response: false | Message = await ProductApi.addToWishlist(
-      token,
-      product_id
-    );
+    const response: false | ApiResponseMessage[] =
+      await ProductApi.addToWishlist(token, product_id);
     console.log(response);
     if (!response) {
       const newToken: false | Token = await ProductApi.getRefreshToken();
@@ -111,10 +109,8 @@ export default function Navigator({ favorite, title, product_id }: Props) {
       localStorage.setItem("access_token", newToken[0].access_token as string);
 
       // Retry to send the data to DB
-      const newResponse: false | Message = await ProductApi.addToWishlist(
-        newToken[0].access_token,
-        product_id
-      );
+      const newResponse: false | ApiResponseMessage[] =
+        await ProductApi.addToWishlist(newToken[0].access_token, product_id);
       console.log(newResponse);
       if (newResponse === false) {
         setDisableButton(false);
